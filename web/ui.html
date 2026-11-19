@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mud Calculator Pro</title>
+<meta name="description" content="Mud Calculator Pro - drilling fluids engineering calculator: weight up, dilution, oil mud, formulation, hydraulics, well control, brines and mud testing.">
+<style>
+:root{--accent:#005c97;--accent2:#0a7bc2;--bg:#f4f6f9;--panel:#fff;--line:#d9dee5;--ink:#1d2733;--muted:#5d6b7a;--eq:#fffbeb;--eqline:#f1e3b0;--res:#f8fafc}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15px}
+header{height:52px;background:var(--accent);color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px;position:sticky;top:0;z-index:5}
+header h1{font-size:18px;margin:0;font-weight:600;white-space:nowrap}
+header .sp{flex:1}
+header select,header button,header a.btn{font:inherit;font-size:13px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;border-radius:6px;padding:5px 10px;cursor:pointer;text-decoration:none}
+header select option{color:#000}
+#menuBtn{display:none}
+.wrap{display:flex;height:calc(100% - 52px)}
+nav{width:300px;min-width:300px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:8px 0 30px}
+nav .g{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding:14px 16px 4px}
+nav a{display:block;padding:6px 16px 6px 24px;color:var(--ink);text-decoration:none;font-size:14px;line-height:1.3;border-left:3px solid transparent}
+nav a:hover{background:#eef4fa}
+nav a.on{background:#e3eef8;border-left-color:var(--accent);font-weight:600}
+main{flex:1;overflow-y:auto;padding:22px 26px 60px}
+h2{margin:0 0 6px;font-size:22px;color:var(--accent)}
+.help{color:var(--muted);margin:0 0 18px;max-width:900px}
+.grid{display:grid;grid-template-columns:minmax(320px,470px) minmax(320px,1fr);gap:22px;align-items:start}
+.grid>*{min-width:0}
+main{min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.form{display:grid;grid-template-columns:1fr 120px 74px;gap:8px 10px;align-items:center}
+.form label{text-align:right;font-size:14px}
+.form input,.form select{font:inherit;padding:6px 8px;border:1px solid #b9c3cf;border-radius:6px;width:100%;text-align:right;background:#fff}
+.form select{text-align:left}
+.form .u{color:var(--muted);font-size:13px}
+.form select.wide{grid-column:span 2}
+button.primary{font:inherit;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:7px;padding:9px 22px;cursor:pointer;margin-top:14px}
+button.primary:hover{background:var(--accent2)}
+button.sec{font:inherit;font-size:13px;background:#fff;border:1px solid #b9c3cf;border-radius:6px;padding:6px 12px;cursor:pointer;margin:8px 6px 0 0}
+pre{font-family:Consolas,"Cascadia Mono",Menlo,monospace;font-size:13px;line-height:1.45;margin:0;white-space:pre;overflow-x:auto}
+.res pre{background:var(--res);border:1px solid var(--line);border-radius:8px;padding:12px;min-height:220px}
+.eq{margin-top:18px}
+.eq h3,.res h3{font-size:15px;margin:0 0 8px;color:var(--accent)}
+.eq pre{background:var(--eq);border:1px solid var(--eqline);border-radius:8px;padding:12px;white-space:pre-wrap}
+.hint{color:var(--muted);font-size:12.5px;margin-top:8px}
+table.t{border-collapse:collapse;background:#fff;font-size:13.5px;width:100%}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 7px;text-align:right}
+table.t th{background:#eef2f6;font-weight:600;position:sticky;top:0}
+table.t td:first-child,table.t th:first-child{text-align:left}
+table.t input{font:inherit;font-size:13px;width:100%;border:0;padding:2px;background:transparent;text-align:inherit}
+.scroll{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:8px}
+.welcome li{margin:4px 0}
+.dl{display:inline-block;margin-top:10px;background:var(--accent);color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600}
+.rep{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px 16px}
+.rep div{display:grid;grid-template-columns:130px 1fr;gap:6px;align-items:center}
+.rep label{text-align:right;font-size:13px}
+.rep input,.rep textarea{font:inherit;font-size:13px;padding:5px 7px;border:1px solid #b9c3cf;border-radius:6px;width:100%}
+.rep .full{grid-column:1/-1;grid-template-columns:130px 1fr}
+.replist{min-height:120px;max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:12px}
+.replist div{padding:6px 10px;cursor:pointer;border-bottom:1px solid #eef1f4;font-size:13.5px}
+.replist div.on{background:#e3eef8;font-weight:600}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1d2733;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:.95}
+@media (max-width:900px){
+  #menuBtn{display:inline-block}
+  header h1{font-size:16px}
+  header .hide-s{display:none}
+  nav{position:fixed;top:52px;bottom:0;left:0;z-index:4;transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 12px rgba(0,0,0,.15)}
+  nav.open{transform:none}
+  main{padding:16px 14px 60px}
+  .grid{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr 100px 58px}
+  .card{padding:12px}
+  pre{font-size:12px}
+  .form label{text-align:left}
+}
+@media print{header,nav,button,.eq h3+.hint{display:none!important}.wrap{display:block}main{overflow:visible}}
+</style>
+</head>
+<body>
+<header>
+  <button id="menuBtn" aria-label="Menu">&#9776;</button>
+  <h1>Mud Calculator Pro</h1>
+  <span class="sp"></span>
+  <select id="preset" aria-label="Unit system" title="Unit system">
+    <option value="0">Oilfield units</option><option value="1">Metric units</option><option value="c" disabled>Custom units</option>
+  </select>
+  <a class="btn hide-s" href="#page=download">Windows version</a>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/*ENGINE*/
+</script>
+<script>
+"use strict";
+(function () {
+  var nav = document.getElementById("nav"), main = document.getElementById("main"), presetSel = document.getElementById("preset");
+  var RELEASE_URL = "https://github.com/mohammedezzatamin-ctrl/MudCalcPro/releases/latest";
+  var REPO_URL = "https://github.com/mohammedezzatamin-ctrl/MudCalcPro";
+
+  // ---------- storage (per-browser, optional)
+  function load(key, def) { try { var s = localStorage.getItem("mcp." + key); return s ? JSON.parse(s) : def; } catch (e) { return def; } }
+  function save(key, val) { try { localStorage.setItem("mcp." + key, JSON.stringify(val)); return true; } catch (e) { return false; } }
+  var savedSel = load("units", null);
+  if (savedSel) Object.keys(savedSel).forEach(function (k) { if (MC.UNITS[k] && savedSel[k] < MC.UNITS[k].opts.length) MC.sel[k] = savedSel[k]; });
+  var savedProducts = load("products", null);
+  if (savedProducts && savedProducts.length) MC.products = savedProducts;
+  var memory = load("inputs", {});
+  var reports = load("reports", []);
+
+  function el(tag, attrs, html) { var e = document.createElement(tag); if (attrs) Object.keys(attrs).forEach(function (k) { if (k === "text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); }); if (html != null) e.innerHTML = html; return e; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function toast(msg) { var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("show"); }, 1800); }
+  function stamp(title) { var d = new Date(); return "Mud Calculator Pro (web)   " + d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) + " " + d.toTimeString().slice(0, 5) + "\n" + title + "\n\n"; }
+  function copyText(t) { if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { toast("Copied"); }, function () { toast("Copy failed"); }); }
+  function download(name, text, type) { var b = new Blob([text], { type: type || "text/plain" }), a = el("a", { href: URL.createObjectURL(b), download: name }); document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+  function printText(title, text) {
+    var w = window.open("", "_blank"); if (!w) { toast("Allow pop-ups to print"); return; }
+    w.document.write("<title>" + esc(title) + "</title><pre style='font:13px Consolas,monospace;white-space:pre-wrap'>" + esc(text) + "</pre>"); w.document.close(); w.focus(); w.print();
+  }
+  function resultButtons(box, getText, title) {
+    var b1 = el("button", { "class": "sec", text: "Copy" }), b2 = el("button", { "class": "sec", text: "Print" }), b3 = el("button", { "class": "sec", text: "Download .txt" });
+    b1.onclick = function () { if (getText()) copyText(getText()); };
+    b2.onclick = function () { if (getText()) printText(title, getText()); };
+    b3.onclick = function () { if (getText()) download(title.replace(/[^\w\- ]+/g, "") + ".txt", getText()); };
+    box.appendChild(b1); box.appendChild(b2); box.appendChild(b3);
+  }
+  function eqBlock(text) { var d = el("div", { "class": "eq card" }); d.appendChild(el("h3", { text: "Equations used" })); d.appendChild(el("pre", { text: text })); return d; }
+
+  // ---------- navigation
+  var PAGES = [
+    { group: "Mud formulation", items: [["Water-based mud from scratch", "page=wbm"], ["Oil-based mud from scratch", "page=obm"]] },
+    { group: "Data & records", items: [["Daily mud reports", "page=reports"], ["Products & prices", "page=products"]] },
+    { group: "Tools", items: [["Unit converter", "page=convert"], ["Unit settings", "page=units"], ["Windows version (download)", "page=download"]] }
+  ];
+  function buildNav() {
+    nav.innerHTML = "";
+    var a0 = el("a", { href: "#" , text: "Home" }); nav.appendChild(a0);
+    function grp(name) { nav.appendChild(el("div", { "class": "g", text: name })); }
+    MC.GROUPS.forEach(function (g, gi) {
+      grp(g);
+      MC.CALCS.forEach(function (c, i) { if (c.group === g) nav.appendChild(el("a", { href: "#calc=" + i, text: c.name })); });
+      if (g === "Brines & salt") nav.appendChild(el("a", { href: "#page=salt", text: "Salt & brine tables" }));
+      if (gi === 2) { grp(PAGES[0].group); PAGES[0].items.forEach(function (it) { nav.appendChild(el("a", { href: "#" + it[1], text: it[0] })); }); }
+    });
+    PAGES.slice(1).forEach(function (p) { grp(p.group); p.items.forEach(function (it) { nav.appendChild(el("a", { href: "#" + it[1], text: it[0] })); }); });
+  }
+  function markNav() {
+    var h = location.hash || "#";
+    Array.prototype.forEach.call(nav.querySelectorAll("a"), function (a) { a.classList.toggle("on", a.getAttribute("href") === h); });
+  }
+  function syncPreset() {
+    var allOil = true, allMet = true;
+    Object.keys(MC.UNITS).forEach(function (k) { if (MC.sel[k] !== 0) allOil = false; if (MC.sel[k] !== MC.UNITS[k].metric) allMet = false; });
+    presetSel.value = allOil ? "0" : (allMet ? "1" : "c");
+  }
+  presetSel.onchange = function () { if (presetSel.value === "c") return; MC.preset(presetSel.value === "1"); save("units", MC.sel); route(); toast("Units changed"); };
+  document.getElementById("menuBtn").onclick = function () { nav.classList.toggle("open"); };
+
+  // ---------- generic calculator page
+  function showCalc(i) {
+    var c = MC.CALCS[i]; if (!c) return home();
+    var mem = memory[c.name] || {};
+    main.appendChild(el("h2", { text: c.name }));
+    main.appendChild(el("p", { "class": "help", text: c.help }));
+    var grid = el("div", { "class": "grid" }), left = el("div"), card = el("div", { "class": "card" }), form = el("form", { "class": "form" });
+    var inputs = {};
+    c.fields.forEach(function (f) {
+      var id = "f_" + f.key, v = mem[f.key] != null ? mem[f.key] : f.def;
+      form.appendChild(el("label", { "for": id, text: f.label }));
+      if (f.choices) {
+        var s = el("select", { id: id, "class": "wide" });
+        f.choices.forEach(function (ch, j) { var o = el("option", { value: j, text: ch }); s.appendChild(o); });
+        s.value = String(v); form.appendChild(s); inputs[f.key] = s;
+      } else {
+        var inp = el("input", { id: id, inputmode: "decimal", autocomplete: "off", value: MC.fmtIn(MC.fromInt(f.kind, v)) });
+        form.appendChild(inp); form.appendChild(el("span", { "class": "u", text: MC.uname(f.kind) })); inputs[f.key] = inp;
+      }
+    });
+    var btn = el("button", { "class": "primary", type: "submit", text: "Calculate" });
+    form.appendChild(el("span")); form.appendChild(btn);
+    card.appendChild(form);
+    card.appendChild(el("div", { "class": "hint", text: "Units are set from the selector at the top. Press Enter to calculate." }));
+    left.appendChild(card);
+    left.appendChild(eqBlock(c.eq + "\n\n" + MC.EQ_COMMON));
+    var right = el("div", { "class": "res card" }); right.appendChild(el("h3", { text: "Results" }));
+    var pre = el("pre", { text: "Enter the inputs and press Calculate." }); right.appendChild(pre);
+    var out = "";
+    resultButtons(right, function () { return out; }, c.name);
+    grid.appendChild(left); grid.appendChild(right); main.appendChild(grid);
+    form.onsubmit = function (e) {
+      e.preventDefault();
+      var v = {}, echo = new MC.Res(); echo.title("Inputs");
+      for (var j = 0; j < c.fields.length; j++) {
+        var f = c.fields[j], x = inputs[f.key];
+        if (f.choices) { v[f.key] = +x.value; echo.t(f.label, f.choices[+x.value]); continue; }
+        var d = MC.parseNum(x.value);
+        if (!isFinite(d)) { x.focus(); x.select(); pre.textContent = "!! '" + x.value + "' is not a valid number for \"" + f.label + "\"."; return; }
+        v[f.key] = MC.toInt(f.kind, d); echo.t(f.label, MC.fmtIn(d) + (MC.uname(f.kind) ? " " + MC.uname(f.kind) : ""));
+      }
+      memory[c.name] = v; save("inputs", memory);
+      out = stamp(c.name) + echo.text() + "\n\n" + MC.run(c, v) + "\n\nEQUATIONS\n---------\n" + c.eq;
+      pre.textContent = out;
+      if (window.innerWidth < 900) right.scrollIntoView({ behavior: "smooth" });
+    };
+  }
+
+  // ---------- formulation
+  function showFormulation(obm) {
+    var key = obm ? "form_obm" : "form_wbm", mem = memory[key] || {};
+    main.appendChild(el("h2", { text: obm ? "Oil-based mud from scratch" : "Water-based mud from scratch" }));
+    main.appendChild(el("p", { "class": "help", text: "Builds a full mixing sheet: base fluids, salt, every product, weight material, packages and cost. Products, package sizes and prices come from Products & prices." }));
+    var grid = el("div", { "class": "grid" }), left = el("div"), card = el("div", { "class": "card" }), form = el("form", { "class": "form" });
+    var wm = MC.weightMaterial(), fields = [
+      ["v", "Volume to mix", "volume", 500], ["w", "Mud weight", "density", obm ? 12 : 10], ["oil", obm ? "OWR (oil %)" : "Oil in liquid phase", "percent", obm ? 80 : 0],
+      ["salt", "Salt / base water", null, 0], ["sal", obm ? "Water phase salinity" : "Chlorides (salt brine)", obm ? "ppm" : "cl", obm ? 250000 : 0],
+      ["pur", "Salt purity", "percent", obm ? 95 : 99], ["sgw", "SG of weight material", "sg", wm ? +wm.sg : 4.2], ["sgo", "SG of base oil", "sg", 0.8]];
+    var saltOpts = obm ? ["CaCl2", "NaCl", "KCl", "None (fresh water)"] : ["Fresh water", "Seawater", "NaCl", "KCl", "CaCl2"], ins = {};
+    fields.forEach(function (f) {
+      form.appendChild(el("label", { text: f[1] }));
+      if (f[0] === "salt") { var s = el("select", { "class": "wide" }); saltOpts.forEach(function (o, j) { s.appendChild(el("option", { value: j, text: o })); }); s.value = String(mem.salt || 0); form.appendChild(s); ins.salt = s; return; }
+      var val = mem[f[0]] != null ? mem[f[0]] : f[3];
+      var inp = el("input", { inputmode: "decimal", value: MC.fmtIn(MC.fromInt(f[2], val)) }); inp.dataset.kind = f[2];
+      form.appendChild(inp); form.appendChild(el("span", { "class": "u", text: MC.uname(f[2]) })); ins[f[0]] = inp;
+    });
+    card.appendChild(form);
+    var prods = MC.products.filter(function (p) { var c = String(p.category).toLowerCase(), s = String(p.system).toUpperCase(); return c !== "weighting" && c !== "salt" && (s === "BOTH" || s === (obm ? "OBM" : "WBM")); });
+    var tbl = el("table", { "class": "t" }); tbl.innerHTML = "<tr><th>Product</th><th>Conc. (" + esc(MC.uname("conc")) + ")</th><th>Package</th><th>SG</th></tr>";
+    var concIn = [];
+    prods.forEach(function (p, j) {
+      var tr = el("tr"), def = (mem.conc && mem.conc[p.name] != null) ? mem.conc[p.name] : (obm ? p.concOBM : p.concWBM);
+      tr.appendChild(el("td", { text: p.name }));
+      var td = el("td"), inp = el("input", { inputmode: "decimal", value: MC.fmtIn(MC.fromInt("conc", +def || 0)) }); td.appendChild(inp); tr.appendChild(td); concIn.push(inp);
+      tr.appendChild(el("td", { text: MC.pkgText(p) })); tr.appendChild(el("td", { text: MC.fmtIn(+p.sg) })); tbl.appendChild(tr);
+    });
+    var wrapT = el("div", { "class": "scroll" }); wrapT.style.marginTop = "14px"; wrapT.appendChild(tbl); card.appendChild(wrapT);
+    card.appendChild(el("div", { "class": "hint", text: "Edit the concentrations (0 = not used). Add products under Products & prices." }));
+    var btn = el("button", { "class": "primary", text: "Calculate" }); card.appendChild(btn);
+    left.appendChild(card); left.appendChild(eqBlock(MC.EQ_FORMULATION));
+    var right = el("div", { "class": "res card" }); right.appendChild(el("h3", { text: "Mixing sheet" }));
+    var pre = el("pre", { text: "Enter the mud details and press Calculate." }); right.appendChild(pre);
+    var out = ""; resultButtons(right, function () { return out; }, obm ? "OBM formulation" : "WBM formulation");
+    grid.appendChild(left); grid.appendChild(right); main.appendChild(grid);
+    function calc(e) {
+      if (e) e.preventDefault();
+      try {
+        var g = function (k) { var d = MC.parseNum(ins[k].value); if (!isFinite(d)) throw new MC.CalcError("'" + ins[k].value + "' is not a valid number."); return MC.toInt(ins[k].dataset.kind, d); };
+        var lines = [], cm = {};
+        prods.forEach(function (p, j) { var d = MC.parseNum(concIn[j].value); if (!isFinite(d)) throw new MC.CalcError("Concentration for " + p.name + " is not a number."); var c = MC.toInt("conc", d); lines.push({ p: p, conc: c }); cm[p.name] = c; });
+        var salt = saltOpts[+ins.salt.value]; if (/^None|^Fresh/.test(salt)) salt = "";
+        var vals = { v: g("v"), w: g("w"), oil: g("oil"), sal: g("sal"), pur: g("pur"), sgw: g("sgw"), sgo: g("sgo"), salt: +ins.salt.value, conc: cm };
+        memory[key] = vals; save("inputs", memory);
+        out = stamp(obm ? "Oil-based mud formulation" : "Water-based mud formulation") + MC.formulate(obm, vals.v, vals.w, vals.oil, salt, vals.sal, vals.pur, vals.sgw, vals.sgo, lines) + "\n\nEQUATIONS\n---------\n" + MC.EQ_FORMULATION;
+      } catch (ex) { out = "!! " + (ex.message || ex); }
+      pre.textContent = out;
+      if (window.innerWidth < 900) right.scrollIntoView({ behavior: "smooth" });
+    }
+    btn.onclick = calc; form.onsubmit = calc;
+  }
+
+  // ---------- salt tables
+  function showSalt() {
+    main.appendChild(el("h2", { text: "Salt & brine tables" }));
+    main.appendChild(el("p", { "class": "help", text: "Brine properties at about 68°F from the density correlation and crystallization curve. Crystallization points are approximate - confirm with the supplier's data sheet." }));
+    var s = el("select"); s.style.cssText = "font:inherit;padding:6px;border-radius:6px;margin-bottom:10px";
+    MC.SALTS.forEach(function (x, j) { s.appendChild(el("option", { value: j, text: x.name })); }); main.appendChild(s);
+    var box = el("div", { "class": "scroll" }); main.appendChild(box);
+    function draw() {
+      var x = MC.SALTS[+s.value], wts = [];
+      for (var w = 1; w < x.max; w++) wts.push(w); wts.push(x.max);
+      var h = "<table class='t'><tr><th>Wt % salt</th><th>SG</th><th>Density (" + esc(MC.uname("density")) + ")</th><th>Salt (" + esc(MC.uname("conc")) + " brine)</th><th>Water (bbl/bbl brine)</th><th>Salt (mg/L)</th><th>Chlorides (mg/L)</th><th>Brine vol / water vol</th><th>Cryst. point (" + esc(MC.uname("temp")) + ")</th><th>WPS (ppm)</th></tr>";
+      wts.forEach(function (w) {
+        var sg = x.SG(w), t = x.TCT(w);
+        h += "<tr><td>" + MC.fmt(w) + "</td><td>" + sg.toFixed(4) + "</td><td>" + MC.fmt(MC.fromInt("density", MC.WD * sg)) + "</td><td>" + MC.fmt(MC.fromInt("conc", MC.LBSG * sg * w / 100)) + "</td><td>" + (sg * (1 - w / 100)).toFixed(4) +
+          "</td><td>" + Math.round(w / 100 * sg * 1e6).toLocaleString("en-US") + "</td><td>" + Math.round(x.clFromWt(w)).toLocaleString("en-US") + "</td><td>" + (1 / (sg * (1 - w / 100))).toFixed(4) +
+          "</td><td>" + (isFinite(t) ? Math.round(MC.fromInt("temp", t)) : "-") + "</td><td>" + Math.round(w * 1e4).toLocaleString("en-US") + "</td></tr>";
+      });
+      box.innerHTML = h + "</table>";
+    }
+    s.onchange = draw; draw();
+    var g = el("div", { "class": "grid" }); g.style.marginTop = "22px";
+    var c1 = el("div", { "class": "card" }); c1.appendChild(el("h3", { text: "Clear brines - typical maximum density" })).style.cssText = "margin:0 0 8px;font-size:15px;color:var(--accent)";
+    var h2 = "<table class='t'><tr><th>Brine</th><th>Max density (" + esc(MC.uname("density")) + ")</th><th>Max SG</th></tr>";
+    MC.BRINES.forEach(function (b) { h2 += "<tr><td>" + esc(b[0]) + "</td><td>" + MC.fmt(MC.fromInt("density", b[1])) + "</td><td>" + (b[1] / MC.WD).toFixed(3) + "</td></tr>"; });
+    c1.insertAdjacentHTML("beforeend", h2 + "</table>");
+    g.appendChild(c1); g.appendChild(eqBlock(MC.EQ_SALT)); main.appendChild(g);
+  }
+
+  // ---------- products
+  function showProducts() {
+    main.appendChild(el("h2", { text: "Products & prices" }));
+    main.appendChild(el("p", { "class": "help", text: "Generic product list used by the formulation pages. Category 'Weighting' = weight material; 'Salt' = salts (name must contain CaCl2, NaCl or KCl). System = WBM, OBM or Both. Package unit: kg, lb, MT, gal, L or bbl. Changes are saved in this browser only." }));
+    var cols = MC.PRODUCT_COLS, keys = ["name", "category", "system", "sg", "pkgSize", "pkgUnit", "price", "concWBM", "concOBM"];
+    var rows = MC.products.map(function (p) { return keys.map(function (k) { return p[k]; }); });
+    var box = el("div", { "class": "scroll" }); main.appendChild(box);
+    function draw() {
+      var t = el("table", { "class": "t" }), hr = el("tr");
+      cols.forEach(function (c) { hr.appendChild(el("th", { text: c })); }); hr.appendChild(el("th", { text: "" })); t.appendChild(hr);
+      rows.forEach(function (r, i) {
+        var tr = el("tr");
+        r.forEach(function (v, j) { var td = el("td"), inp = el("input", { value: v == null ? "" : v }); inp.oninput = function () { rows[i][j] = inp.value; }; td.appendChild(inp); tr.appendChild(td); });
+        var del = el("button", { "class": "sec", text: "✕", title: "Remove row" }); del.style.margin = "0"; del.onclick = function () { rows.splice(i, 1); draw(); };
+        var td2 = el("td"); td2.appendChild(del); tr.appendChild(td2); t.appendChild(tr);
+      });
+      box.innerHTML = ""; box.appendChild(t);
+    }
+    draw();
+    var bar = el("div");
+    function btn(text, fn) { var b = el("button", { "class": "sec", text: text }); b.onclick = fn; bar.appendChild(b); }
+    function toProducts() { return rows.filter(function (r) { return String(r[0]).trim(); }).map(function (r) { var p = {}; keys.forEach(function (k, j) { p[k] = j >= 3 && j !== 5 ? (+MC.parseNum(r[j]) || 0) : String(r[j] == null ? "" : r[j]).trim(); }); if (!(p.sg > 0)) p.sg = 1; if (!p.system) p.system = "Both"; if (!p.pkgUnit) p.pkgUnit = "kg"; return p; }); }
+    btn("Add row", function () { rows.push(["", "", "Both", 1, 25, "kg", 0, 0, 0]); draw(); });
+    btn("Save", function () { MC.products = toProducts(); toast(save("products", MC.products) ? "Products saved in this browser" : "Saved for this visit only"); });
+    btn("Reset to generic list", function () { rows = MC.DEFAULT_PRODUCTS.map(function (p) { return keys.map(function (k) { return p[k]; }); }); MC.products = toProducts(); save("products", MC.products); draw(); toast("Generic list restored"); });
+    btn("Export CSV", function () { download("products.csv", [cols].concat(toProducts().map(function (p) { return keys.map(function (k) { return p[k]; }); })).map(csvRow).join("\r\n"), "text/csv"); });
+    var file = el("input", { type: "file", accept: ".csv" }); file.style.display = "none";
+    file.onchange = function () { var f = file.files[0]; if (!f) return; var rd = new FileReader(); rd.onload = function () { var data = parseCsv(rd.result); data.shift(); rows = data.filter(function (r) { return r[0]; }).map(function (r) { return keys.map(function (k, j) { return r[j] == null ? "" : r[j]; }); }); draw(); toast("Imported - press Save to keep"); }; rd.readAsText(f); };
+    btn("Import CSV", function () { file.click(); }); bar.appendChild(file);
+    main.appendChild(bar);
+  }
+  function csvCell(s) { s = s == null ? "" : String(s); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+  function csvRow(r) { return r.map(csvCell).join(","); }
+  function parseCsv(text) {
+    var rows = [], cur = [], sb = "", q = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { sb += '"'; i++; } else q = false; } else sb += c; }
+      else if (c === '"') q = true; else if (c === ",") { cur.push(sb); sb = ""; } else if (c === "\r") { } else if (c === "\n") { cur.push(sb); sb = ""; rows.push(cur); cur = []; } else sb += c;
+    }
+    cur.push(sb); if (cur.length > 1 || cur[0]) rows.push(cur); return rows;
+  }
+
+  // ---------- reports
+  var RF = ["Date", "Rig", "Well", "Operator", "Mud engineer", "Mud system", "Depth MD", "Depth TVD", "Hole size", "Casing shoe", "Activity",
+    "Mud weight", "Funnel visc (s/qt)", "PV (cP)", "YP", "Gels 10s/10m/30m", "600/300", "6/3", "API fluid loss (ml)", "HTHP fluid loss (ml)", "HTHP temp",
+    "Cake (1/32 in)", "pH", "Pm", "Pf/Mf", "Chlorides (mg/L)", "Hardness Ca (mg/L)", "MBT (ppb)", "Solids %", "Oil %", "Water %", "Sand %",
+    "OWR", "ES (V)", "WPS (ppm)", "Excess lime (ppb)", "LGS %", "HGS %", "Active volume", "Reserve volume", "Surface losses", "Downhole losses",
+    "Volume built", "Products used", "Remarks"];
+  function showReports() {
+    main.appendChild(el("h2", { text: "Daily mud reports" }));
+    main.appendChild(el("p", { "class": "help", text: "Record daily mud properties, volumes and products. Reports are kept in this browser; use Export CSV to save them to a file or open them in Excel." }));
+    var list = el("div", { "class": "replist" }), card = el("div", { "class": "card" }), form = el("div", { "class": "rep" }), boxes = {}, selIdx = -1;
+    RF.forEach(function (f) {
+      var multi = f === "Products used" || f === "Remarks", d = el("div", multi ? { "class": "full" } : null);
+      d.appendChild(el("label", { text: f })); var inp = el(multi ? "textarea" : "input", multi ? { rows: 3 } : null); d.appendChild(inp); form.appendChild(d); boxes[f] = inp;
+    });
+    function fill(r) { RF.forEach(function (f) { boxes[f].value = r && r[f] != null ? r[f] : ""; }); }
+    function drawList() {
+      list.innerHTML = "";
+      if (!reports.length) list.appendChild(el("div", { text: "No reports yet - press New report." }));
+      reports.forEach(function (r, i) { var d = el("div", { text: (r.Date || "") + "   " + (r.Well || "") + "   " + (r["Depth MD"] || "") }); if (i === selIdx) d.className = "on"; d.onclick = function () { selIdx = i; fill(r); drawList(); }; list.appendChild(d); });
+    }
+    var bar = el("div");
+    function btn(t, fn) { var b = el("button", { "class": "sec", text: t }); b.onclick = fn; bar.appendChild(b); }
+    btn("New report", function () { var last = reports[reports.length - 1]; fill(null); if (last) ["Rig", "Well", "Operator", "Mud engineer", "Mud system", "Hole size", "Casing shoe"].forEach(function (k) { boxes[k].value = last[k] || ""; }); boxes.Date.value = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }); selIdx = -1; drawList(); });
+    btn("Save report", function () { var r = {}; RF.forEach(function (f) { r[f] = boxes[f].value; }); if (selIdx >= 0) reports[selIdx] = r; else { reports.push(r); selIdx = reports.length - 1; } toast(save("reports", reports) ? "Report saved in this browser" : "Saved for this visit only - export CSV to keep"); drawList(); });
+    btn("Delete", function () { if (selIdx < 0) return; reports.splice(selIdx, 1); selIdx = -1; save("reports", reports); fill(null); drawList(); toast("Report deleted"); });
+    btn("Print", function () { var t = RF.map(function (f) { return MC.pad(f) + boxes[f].value; }).join("\n"); printText("Daily Mud Report", "DAILY MUD REPORT\n\n" + t); });
+    btn("Export CSV", function () { download("reports.csv", [RF].concat(reports.map(function (r) { return RF.map(function (f) { return r[f] || ""; }); })).map(csvRow).join("\r\n"), "text/csv"); });
+    var file = el("input", { type: "file", accept: ".csv" }); file.style.display = "none";
+    file.onchange = function () { var f = file.files[0]; if (!f) return; var rd = new FileReader(); rd.onload = function () { var data = parseCsv(rd.result), head = data.shift() || []; data.forEach(function (row) { var r = {}; head.forEach(function (h, j) { r[h] = row[j] || ""; }); reports.push(r); }); save("reports", reports); drawList(); toast("Imported " + data.length + " reports"); }; rd.readAsText(f); };
+    btn("Import CSV", function () { file.click(); }); bar.appendChild(file);
+    main.appendChild(list); card.appendChild(form); card.appendChild(bar); main.appendChild(card); drawList();
+  }
+
+  // ---------- converter and unit settings
+  function showConvert() {
+    main.appendChild(el("h2", { text: "Unit converter" }));
+    main.appendChild(el("p", { "class": "help", text: "Type a value, choose its unit, and see it in every other unit of the same kind." }));
+    var kinds = Object.keys(MC.UNITS).filter(function (k) { return MC.UNITS[k].opts.length > 1; });
+    var card = el("div", { "class": "card" }); card.style.maxWidth = "620px";
+    var row = el("div"); row.style.cssText = "display:flex;gap:8px;flex-wrap:wrap";
+    var sk = el("select"), val = el("input", { value: "1", inputmode: "decimal" }), su = el("select"), pre = el("pre");
+    [sk, val, su].forEach(function (x) { x.style.cssText = "font:inherit;padding:6px 8px;border:1px solid #b9c3cf;border-radius:6px"; row.appendChild(x); });
+    kinds.forEach(function (k, j) { sk.appendChild(el("option", { value: j, text: MC.UNITS[k].kind })); });
+    pre.style.cssText = "margin-top:14px;background:var(--res);border:1px solid var(--line);border-radius:8px;padding:12px";
+    function fillUnits() { su.innerHTML = ""; MC.UNITS[kinds[+sk.value]].opts.forEach(function (o, j) { su.appendChild(el("option", { value: j, text: o.name })); }); }
+    function runC() {
+      var k = kinds[+sk.value], d = MC.parseNum(val.value); if (!isFinite(d)) { pre.textContent = "Not a number."; return; }
+      var from = MC.UNITS[k].opts[+su.value], inner = d * from.f + from.o;
+      pre.textContent = MC.UNITS[k].opts.map(function (u) { return MC.pad(u.name) + MC.fmt((inner - u.o) / u.f); }).join("\n");
+    }
+    sk.onchange = function () { fillUnits(); runC(); }; su.onchange = runC; val.oninput = runC;
+    fillUnits(); runC(); card.appendChild(row); card.appendChild(pre); main.appendChild(card);
+  }
+  function showUnits() {
+    main.appendChild(el("h2", { text: "Unit settings" }));
+    main.appendChild(el("p", { "class": "help", text: "Choose the unit used for each quantity on every page. Saved in this browser." }));
+    var card = el("div", { "class": "card" }); card.style.maxWidth = "560px";
+    var b1 = el("button", { "class": "sec", text: "All oilfield units" }), b2 = el("button", { "class": "sec", text: "All metric units" });
+    b1.onclick = function () { MC.preset(false); save("units", MC.sel); route(); }; b2.onclick = function () { MC.preset(true); save("units", MC.sel); route(); };
+    card.appendChild(b1); card.appendChild(b2);
+    var form = el("div", { "class": "form" }); form.style.cssText = "grid-template-columns:1fr 170px;margin-top:14px";
+    Object.keys(MC.UNITS).forEach(function (k) {
+      var U = MC.UNITS[k]; if (U.opts.length < 2) return;
+      form.appendChild(el("label", { text: U.kind }));
+      var s = el("select"); U.opts.forEach(function (o, j) { s.appendChild(el("option", { value: j, text: o.name })); }); s.value = String(MC.sel[k]);
+      s.onchange = function () { MC.sel[k] = +s.value; save("units", MC.sel); syncPreset(); toast("Units updated"); };
+      form.appendChild(s);
+    });
+    card.appendChild(form); main.appendChild(card);
+  }
+
+  // ---------- home & download
+  function home() {
+    main.appendChild(el("h2", { text: "Mud Calculator Pro" }));
+    main.insertAdjacentHTML("beforeend",
+      "<div class='card welcome' style='max-width:900px'><p>Drilling fluids engineering calculator. Pick a calculation from the menu" + (window.innerWidth < 900 ? " (☰ top left)" : " on the left") + ":</p><ul>" +
+      "<li>Weight up, cut weight, mix muds, add barite</li><li>Oil mud: OWR, WPS, water/oil additions, water contamination</li>" +
+      "<li>Basic mixes, slugs, full WBM/OBM formulation with packages and cost</li><li>Hole and well volumes, pump output, annular velocity, ECD, cuttings, tanks</li>" +
+      "<li>Hydrostatic, EMW / LOT / MAASP, kill sheet basics</li><li>Brines: dry-salt brines, blending, chlorides conversion, salt tables</li>" +
+      "<li>Mud testing: rheology, WBM solids analysis, OBM retort &amp; salinity</li><li>Daily mud reports, product list with prices, unit converter</li></ul>" +
+      "<p>Every calculation shows the <b>equations</b> it uses. Units: choose oilfield or metric at the top, or per quantity in Unit settings.</p>" +
+      "<p>Your inputs, products, reports and unit choices are kept in this browser only.</p>" +
+      "<p style='color:var(--muted)'>All results are engineering estimates. Check critical numbers before use.</p>" +
+      "<a class='dl' href='#page=download'>Get the Windows version</a> &nbsp; <a href='" + REPO_URL + "' target='_blank' rel='noopener'>Source code on GitHub</a></div>");
+  }
+  function showDownload() {
+    main.appendChild(el("h2", { text: "Windows version" }));
+    main.insertAdjacentHTML("beforeend",
+      "<div class='card' style='max-width:760px'><p>The same calculator as a Windows desktop program (MudCalcPro.exe). It needs no installation: download it, then double-click to run. It keeps its data (products, reports, settings) as CSV files in a <code>data</code> folder next to the program.</p>" +
+      "<a class='dl' href='" + RELEASE_URL + "' target='_blank' rel='noopener'>Download MudCalcPro.exe</a>" +
+      "<p class='hint'>Requires Windows with .NET Framework 4 (built into Windows 8, 10 and 11). If Windows SmartScreen warns about an unknown publisher, choose More info → Run anyway.</p>" +
+      "<p class='hint'>To build it yourself: download the source from <a href='" + REPO_URL + "' target='_blank' rel='noopener'>GitHub</a> and double-click <code>build.bat</code>.</p></div>");
+  }
+
+  // ---------- router
+  function route() {
+    main.innerHTML = ""; nav.classList.remove("open"); syncPreset();
+    var h = location.hash.replace(/^#/, ""), m;
+    if ((m = /^calc=(\d+)$/.exec(h))) showCalc(+m[1]);
+    else if (h === "page=wbm") showFormulation(false);
+    else if (h === "page=obm") showFormulation(true);
+    else if (h === "page=salt") showSalt();
+    else if (h === "page=products") showProducts();
+    else if (h === "page=reports") showReports();
+    else if (h === "page=convert") showConvert();
+    else if (h === "page=units") showUnits();
+    else if (h === "page=download") showDownload();
+    else home();
+    markNav(); main.scrollTop = 0;
+  }
+  window.addEventListener("hashchange", route);
+  buildNav(); route();
+})();
+</script>
+</body>
+</html>

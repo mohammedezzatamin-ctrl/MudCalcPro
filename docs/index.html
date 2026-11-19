@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mud Calculator Pro</title>
+<meta name="description" content="Mud Calculator Pro - drilling fluids engineering calculator: weight up, dilution, oil mud, formulation, hydraulics, well control, brines and mud testing.">
+<style>
+:root{--accent:#005c97;--accent2:#0a7bc2;--bg:#f4f6f9;--panel:#fff;--line:#d9dee5;--ink:#1d2733;--muted:#5d6b7a;--eq:#fffbeb;--eqline:#f1e3b0;--res:#f8fafc}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15px}
+header{height:52px;background:var(--accent);color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px;position:sticky;top:0;z-index:5}
+header h1{font-size:18px;margin:0;font-weight:600;white-space:nowrap}
+header .sp{flex:1}
+header select,header button,header a.btn{font:inherit;font-size:13px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;border-radius:6px;padding:5px 10px;cursor:pointer;text-decoration:none}
+header select option{color:#000}
+#menuBtn{display:none}
+.wrap{display:flex;height:calc(100% - 52px)}
+nav{width:300px;min-width:300px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:8px 0 30px}
+nav .g{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding:14px 16px 4px}
+nav a{display:block;padding:6px 16px 6px 24px;color:var(--ink);text-decoration:none;font-size:14px;line-height:1.3;border-left:3px solid transparent}
+nav a:hover{background:#eef4fa}
+nav a.on{background:#e3eef8;border-left-color:var(--accent);font-weight:600}
+main{flex:1;overflow-y:auto;padding:22px 26px 60px}
+h2{margin:0 0 6px;font-size:22px;color:var(--accent)}
+.help{color:var(--muted);margin:0 0 18px;max-width:900px}
+.grid{display:grid;grid-template-columns:minmax(320px,470px) minmax(320px,1fr);gap:22px;align-items:start}
+.grid>*{min-width:0}
+main{min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.form{display:grid;grid-template-columns:1fr 120px 74px;gap:8px 10px;align-items:center}
+.form label{text-align:right;font-size:14px}
+.form input,.form select{font:inherit;padding:6px 8px;border:1px solid #b9c3cf;border-radius:6px;width:100%;text-align:right;background:#fff}
+.form select{text-align:left}
+.form .u{color:var(--muted);font-size:13px}
+.form select.wide{grid-column:span 2}
+button.primary{font:inherit;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:7px;padding:9px 22px;cursor:pointer;margin-top:14px}
+button.primary:hover{background:var(--accent2)}
+button.sec{font:inherit;font-size:13px;background:#fff;border:1px solid #b9c3cf;border-radius:6px;padding:6px 12px;cursor:pointer;margin:8px 6px 0 0}
+pre{font-family:Consolas,"Cascadia Mono",Menlo,monospace;font-size:13px;line-height:1.45;margin:0;white-space:pre;overflow-x:auto}
+.res pre{background:var(--res);border:1px solid var(--line);border-radius:8px;padding:12px;min-height:220px}
+.eq{margin-top:18px}
+.eq h3,.res h3{font-size:15px;margin:0 0 8px;color:var(--accent)}
+.eq pre{background:var(--eq);border:1px solid var(--eqline);border-radius:8px;padding:12px;white-space:pre-wrap}
+.hint{color:var(--muted);font-size:12.5px;margin-top:8px}
+table.t{border-collapse:collapse;background:#fff;font-size:13.5px;width:100%}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 7px;text-align:right}
+table.t th{background:#eef2f6;font-weight:600;position:sticky;top:0}
+table.t td:first-child,table.t th:first-child{text-align:left}
+table.t input{font:inherit;font-size:13px;width:100%;border:0;padding:2px;background:transparent;text-align:inherit}
+.scroll{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:8px}
+.welcome li{margin:4px 0}
+.dl{display:inline-block;margin-top:10px;background:var(--accent);color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600}
+.rep{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px 16px}
+.rep div{display:grid;grid-template-columns:130px 1fr;gap:6px;align-items:center}
+.rep label{text-align:right;font-size:13px}
+.rep input,.rep textarea{font:inherit;font-size:13px;padding:5px 7px;border:1px solid #b9c3cf;border-radius:6px;width:100%}
+.rep .full{grid-column:1/-1;grid-template-columns:130px 1fr}
+.replist{min-height:120px;max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:12px}
+.replist div{padding:6px 10px;cursor:pointer;border-bottom:1px solid #eef1f4;font-size:13.5px}
+.replist div.on{background:#e3eef8;font-weight:600}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1d2733;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:.95}
+@media (max-width:900px){
+  #menuBtn{display:inline-block}
+  header h1{font-size:16px}
+  header .hide-s{display:none}
+  nav{position:fixed;top:52px;bottom:0;left:0;z-index:4;transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 12px rgba(0,0,0,.15)}
+  nav.open{transform:none}
+  main{padding:16px 14px 60px}
+  .grid{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr 100px 58px}
+  .card{padding:12px}
+  pre{font-size:12px}
+  .form label{text-align:left}
+}
+@media print{header,nav,button,.eq h3+.hint{display:none!important}.wrap{display:block}main{overflow:visible}}
+</style>
+</head>
+<body>
+<header>
+  <button id="menuBtn" aria-label="Menu">&#9776;</button>
+  <h1>Mud Calculator Pro</h1>
+  <span class="sp"></span>
+  <select id="preset" aria-label="Unit system" title="Unit system">
+    <option value="0">Oilfield units</option><option value="1">Metric units</option><option value="c" disabled>Custom units</option>
+  </select>
+  <a class="btn hide-s" href="#page=download">Windows version</a>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// Mud Calculator Pro - calculation engine (web). Mirrors src/*.cs of the Windows version.
+// Internal units: ppg, bbl, lb, ft, in, psi, gpm, lb/bbl, degF.
+"use strict";
+var MC = (function () {
+  var WD = 8.345, LBSG = 42 * WD;
+
+  // ---------------------------------------------------------------- units
+  function U(n, f, o) { return { name: n, f: f, o: o || 0 }; }
+  var UNITS = {
+    none: { kind: "", metric: 0, opts: [U("", 1)] },
+    density: { kind: "Density / mud weight", metric: 1, opts: [U("ppg", 1), U("SG", 8.345), U("kg/m³", 0.008345), U("psi/1000ft", 1 / 52), U("lb/ft³", 1 / 7.48052)] },
+    volume: { kind: "Volume", metric: 1, opts: [U("bbl", 1), U("m³", 6.28981), U("litre", 0.00628981), U("US gal", 1 / 42)] },
+    mass: { kind: "Mass", metric: 1, opts: [U("lb", 1), U("kg", 2.20462), U("MT", 2204.62)] },
+    depth: { kind: "Depth / length", metric: 1, opts: [U("ft", 1), U("m", 3.28084)] },
+    diameter: { kind: "Diameter", metric: 0, opts: [U("in", 1), U("mm", 1 / 25.4)] },
+    pressure: { kind: "Pressure", metric: 1, opts: [U("psi", 1), U("bar", 14.5038), U("kPa", 0.145038), U("kg/cm²", 14.2233)] },
+    flow: { kind: "Flow rate", metric: 1, opts: [U("gpm", 1), U("L/min", 0.264172), U("bbl/min", 42), U("m³/min", 264.172)] },
+    conc: { kind: "Concentration", metric: 1, opts: [U("ppb", 1), U("kg/m³", 1 / 2.853)] },
+    percent: { kind: "", metric: 0, opts: [U("%", 1)] },
+    temp: { kind: "Temperature", metric: 1, opts: [U("°F", 1, 0), U("°C", 1.8, 32)] },
+    visc: { kind: "Viscosity", metric: 0, opts: [U("cP", 1), U("mPa·s", 1)] },
+    yp: { kind: "Yield point / gels", metric: 1, opts: [U("lb/100ft²", 1), U("Pa", 1 / 0.4788)] },
+    cl: { kind: "", metric: 0, opts: [U("mg/L", 1)] },
+    velocity: { kind: "Annular velocity", metric: 1, opts: [U("ft/min", 1), U("m/min", 3.28084)] },
+    capacity: { kind: "Capacity", metric: 1, opts: [U("bbl/ft", 1), U("m³/m", 1.917134), U("L/m", 0.001917134)] },
+    time: { kind: "Time", metric: 0, opts: [U("min", 1), U("hr", 60)] },
+    gradient: { kind: "Pressure gradient", metric: 1, opts: [U("psi/ft", 1), U("kPa/m", 0.0442075), U("bar/m", 4.42075)] },
+    sg: { kind: "", metric: 0, opts: [U("SG", 1)] },
+    pumpout: { kind: "Pump output", metric: 1, opts: [U("bbl/stk", 1), U("L/stk", 0.00628981), U("gal/stk", 1 / 42)] },
+    ppm: { kind: "", metric: 0, opts: [U("ppm", 1)] },
+    dial: { kind: "", metric: 0, opts: [U("dial", 1)] },
+    rate: { kind: "Drilling rate", metric: 1, opts: [U("ft/hr", 1), U("m/hr", 3.28084)] }
+  };
+  var sel = {};
+  Object.keys(UNITS).forEach(function (k) { sel[k] = 0; });
+  function cur(k) { return UNITS[k].opts[sel[k]]; }
+  function uname(k) { return cur(k).name; }
+  function toInt(k, d) { var u = cur(k); return d * u.f + u.o; }
+  function fromInt(k, v) { var u = cur(k); return (v - u.o) / u.f; }
+  function fmt(v) {
+    if (!isFinite(v)) return "-";
+    var a = Math.abs(v);
+    if (a === 0) return "0";
+    function g(d) { return v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    if (a >= 10000) return g(0);
+    if (a >= 100) return g(1);
+    if (a >= 1) return v.toFixed(2);
+    if (a >= 0.01) return v.toFixed(4);
+    return v.toFixed(6);
+  }
+  function fmtIn(v) { if (!isFinite(v)) return "0"; return String(Math.round(v * 10000) / 10000); }
+  function show(v, k) { var n = uname(k); return fmt(fromInt(k, v)) + (n ? " " + n : ""); }
+  function parseNum(s) {
+    s = String(s == null ? "" : s).trim().replace(/\s/g, "");
+    if (s === "") return 0;
+    if (s.indexOf(",") >= 0 && s.indexOf(".") < 0 && s.split(",").length === 2 && s.length - s.indexOf(",") - 1 !== 3) s = s.replace(",", ".");
+    else s = s.replace(/,/g, "");
+    if (!/^[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?$/.test(s)) return NaN;
+    return parseFloat(s);
+  }
+  function preset(metric) { Object.keys(UNITS).forEach(function (k) { sel[k] = metric ? UNITS[k].metric : 0; }); }
+
+  // ---------------------------------------------------------------- salts
+  function Salt(name, A, B, clf, max, sgs, curve) {
+    var tw = [], tf = [];
+    curve.split(";").forEach(function (p) { var kv = p.split(":"); tw.push(+kv[0]); tf.push(+kv[1]); });
+    var s = { name: name, A: A, B: B, clf: clf, max: max, sgSolid: sgs, tw: tw, tf: tf };
+    s.SG = function (wt) { return 1.0036 * (0.99707 + A * wt + B * wt * wt); };
+    s.TCT = function (wt) {
+      if (wt <= tw[0]) return tf[0];
+      for (var i = 1; i < tw.length; i++) if (wt <= tw[i]) return tf[i - 1] + (tf[i] - tf[i - 1]) * (wt - tw[i - 1]) / (tw[i] - tw[i - 1]);
+      return NaN;
+    };
+    s.wtFromSG = function (sg) { var lo = 0, hi = max * 1.2; for (var i = 0; i < 80; i++) { var m = (lo + hi) / 2; if (s.SG(m) < sg) lo = m; else hi = m; } return (lo + hi) / 2; };
+    s.wtFromCl = function (cl) { var w = 0; for (var i = 0; i < 60; i++) w = (cl / clf) / (s.SG(w) * 1e4); return w; };
+    s.clFromWt = function (wt) { return wt / 100 * s.SG(wt) * 1e6 * clf; };
+    return s;
+  }
+  var SALTS = [
+    Salt("CaCl2", 0.007923, 0.00004964, 0.6389, 40.0, 2.15, "0:32;5:27.7;10:20;15:12.2;20:-4;25:-21;29.8:-60;30:-52;32.5:-4;35:14;37.3:32;40:61"),
+    Salt("NaCl", 0.006504, 0.00004395, 0.6066, 26.4, 2.165, "0:32;5:26.7;10:20.2;15:12.4;20:2.4;23.3:-6;26.29:32.3;26.4:60"),
+    Salt("KCl", 0.0059, 0.00003415, 0.4756, 24.0, 1.98, "0:32;4:28.7;8:25.2;12:21.4;16:17.3;19.5:12.7;21:22;24.5:60")
+  ];
+  function getSalt(n) { for (var i = 0; i < SALTS.length; i++) if (SALTS[i].name.toLowerCase() === String(n).toLowerCase()) return SALTS[i]; return null; }
+  var BRINES = [["Potassium chloride KCl", 9.7], ["Sodium chloride NaCl", 10.0], ["Potassium bromide KBr", 11.5], ["Calcium chloride CaCl2", 11.6],
+    ["Sodium bromide NaBr", 12.6], ["Calcium bromide CaBr2", 15.1], ["Zinc bromide / CaBr2 blends", 19.2], ["Sodium formate (approx.)", 11.1],
+    ["Potassium formate (approx.)", 13.1], ["Cesium formate (approx.)", 19.2]];
+
+  // ---------------------------------------------------------------- products
+  var PRODUCT_COLS = ["Name", "Category", "System", "SG", "PackageSize", "PackageUnit", "PricePerPackage", "ConcWBM_ppb", "ConcOBM_ppb"];
+  var DEFAULT_PRODUCTS = [
+    ["Barite (API)", "Weighting", "Both", 4.2, 50, "kg", 0, 0, 0], ["Bentonite (API)", "Viscosifier", "WBM", 2.6, 50, "kg", 0, 0, 0],
+    ["Xanthan gum", "Viscosifier", "WBM", 1.5, 25, "kg", 0, 1, 0], ["PAC-LV", "Fluid loss", "WBM", 1.6, 25, "kg", 0, 2, 0],
+    ["PAC-R", "Fluid loss", "WBM", 1.6, 25, "kg", 0, 1, 0], ["Modified starch", "Fluid loss", "WBM", 1.5, 25, "kg", 0, 4, 0],
+    ["Caustic soda", "Alkalinity", "WBM", 2.13, 25, "kg", 0, 0.5, 0], ["Soda ash", "Alkalinity", "WBM", 2.53, 50, "kg", 0, 0.25, 0],
+    ["Lime", "Alkalinity", "Both", 2.24, 25, "kg", 0, 0, 6], ["Calcium carbonate (fine)", "Bridging", "Both", 2.7, 25, "kg", 0, 10, 10],
+    ["Primary emulsifier", "Emulsifier", "OBM", 0.94, 55, "gal", 0, 0, 8], ["Wetting agent", "Emulsifier", "OBM", 0.95, 55, "gal", 0, 0, 2],
+    ["Organophilic clay", "Viscosifier", "OBM", 1.7, 25, "kg", 0, 0, 6], ["Fluid loss additive (gilsonite)", "Fluid loss", "OBM", 1.05, 25, "kg", 0, 0, 6],
+    ["Calcium chloride CaCl2 (95%)", "Salt", "Both", 2.15, 25, "kg", 0, 0, 0], ["Sodium chloride NaCl", "Salt", "Both", 2.165, 50, "kg", 0, 0, 0],
+    ["Potassium chloride KCl", "Salt", "Both", 1.98, 50, "kg", 0, 0, 0]
+  ].map(function (r) { return { name: r[0], category: r[1], system: r[2], sg: r[3], pkgSize: r[4], pkgUnit: r[5], price: r[6], concWBM: r[7], concOBM: r[8] }; });
+  var products = DEFAULT_PRODUCTS.map(function (p) { return Object.assign({}, p); });
+  function pkgLb(p) {
+    var u = String(p.pkgUnit || "").trim().toLowerCase(), s = +p.pkgSize || 0, sg = +p.sg || 1;
+    if (u === "lb" || u === "lbs") return s;
+    if (u === "kg") return s * 2.20462;
+    if (u === "mt" || u === "t" || u === "tonne") return s * 2204.62;
+    if (u === "gal" || u === "usgal") return s * WD * sg;
+    if (u === "l" || u === "litre" || u === "liter") return s * 0.264172 * WD * sg;
+    if (u === "bbl") return s * 42 * WD * sg;
+    return s * 2.20462;
+  }
+  function pkgText(p) { return fmtIn(+p.pkgSize) + " " + p.pkgUnit; }
+  function weightMaterial() { for (var i = 0; i < products.length; i++) if (/^weighting$/i.test(products[i].category)) return products[i]; return null; }
+  function saltProduct(n) { for (var i = 0; i < products.length; i++) if (/^salt$/i.test(products[i].category) && products[i].name.toLowerCase().indexOf(n.toLowerCase()) >= 0) return products[i]; return null; }
+
+  // ---------------------------------------------------------------- results
+  function CalcError(m) { this.message = m; }
+  function need(ok, m) { if (!ok) throw new CalcError(m); }
+  function pad(s) { s = s + " "; while (s.length < 36) s += "."; return s + " "; }
+  function Res() { this.L = []; }
+  Res.prototype.title = function (s) { this.L.push(s.toUpperCase()); this.L.push(new Array(Math.min(60, s.length) + 1).join("-")); };
+  Res.prototype.line = function (s) { this.L.push(s); };
+  Res.prototype.blank = function () { this.L.push(""); };
+  Res.prototype.q = function (l, v, k) { this.L.push(pad(l) + show(v, k)); };
+  Res.prototype.n = function (l, v, u) { this.L.push(pad(l) + fmt(v) + (u ? " " + u : "")); };
+  Res.prototype.t = function (l, s) { this.L.push(pad(l) + s); };
+  Res.prototype.warn = function (s) { this.L.push("!! " + s); };
+  Res.prototype.mass = function (l, lb, p) {
+    this.q(l, lb, "mass");
+    if (uname("mass") !== "MT") this.n("   = tonnes", lb / 2204.62, "MT");
+    if (p && pkgLb(p) > 0 && lb > 0) this.t("   = packages @ " + pkgText(p), Math.ceil(lb / pkgLb(p) - 1e-9).toLocaleString("en-US"));
+  };
+  Res.prototype.barite = function (l, lb) { this.mass(l, lb, weightMaterial()); };
+  Res.prototype.text = function () { return this.L.join("\n"); };
+
+  // ---------------------------------------------------------------- calculations
+  var CALCS = [];
+  function F(key, label, kind, def) { return { key: key, label: label, kind: kind, def: def }; }
+  function CH(key, label, def, choices) { return { key: key, label: label, kind: "none", def: def, choices: choices }; }
+  function add(group, name, help, fields, eq, fn) { CALCS.push({ group: group, name: name, help: help, fields: fields, eq: eq, fn: fn }); }
+  var G1 = "Weight up & dilution", G2 = "Oil mud adjustments", G3 = "Basic mixes & slugs", G4 = "Volumes & hydraulics",
+      G5 = "Pressure & well control", G6 = "Brines & salt", G7 = "Mud testing & solids";
+  function owrSplit(oil, owr) {
+    need(owr > 0 && owr < 100, "OWR (oil %) must be between 0 and 100.");
+    need(oil > 0 && oil < 100, "Oil % (retort) must be between 0 and 100.");
+    var water = oil * (100 - owr) / owr;
+    need(oil + water < 100, "Oil % and OWR give more than 100% liquid - check the inputs.");
+    return water;
+  }
+  var SALT3 = ["CaCl2", "NaCl", "KCl"];
+
+  // 1. weight up & dilution
+  add(G1, "Weight up (volume increase)", "Weight material needed to raise the mud density of the whole system. Mud volume increases by the volume of weight material.",
+    [F("w1", "Initial mud density", "density", 10), F("w2", "Desired mud density", "density", 12), F("v", "Starting mud volume", "volume", 500), F("sg", "SG of weight material", "sg", 4.2)],
+    "Vb = V1 × (W2 − W1) / (ρb − W2)\nM  = 42 × ρb × Vb          lb/bbl = M / V1\nVfinal = V1 + Vb\n(SG 4.2:  lb/bbl = 1470 × (W2 − W1) / (35 − W2))",
+    function (v, r) {
+      var rb = WD * v.sg;
+      need(v.w2 > v.w1, "Desired density must be higher than initial density.");
+      need(rb > v.w2, "Weight material SG is too low for the desired density.");
+      var vb = v.v * (v.w2 - v.w1) / (rb - v.w2), lb = vb * 42 * rb;
+      r.barite("Weight material required", lb);
+      r.q("   per unit volume of starting mud", lb / v.v, "conc");
+      r.q("Volume increase", vb, "volume");
+      r.q("Final mud volume", v.v + vb, "volume");
+    });
+  add(G1, "Weight up (constant volume)", "Dump part of the mud first, then weight up so the final volume equals the starting volume.",
+    [F("w1", "Initial mud density", "density", 10), F("w2", "Desired mud density", "density", 12), F("v", "Mud volume (to keep)", "volume", 500), F("sg", "SG of weight material", "sg", 4.2)],
+    "Vkeep = V × (ρb − W2) / (ρb − W1)\nVdump = V − Vkeep\nM = 42 × ρb × Vdump",
+    function (v, r) {
+      var rb = WD * v.sg;
+      need(v.w2 > v.w1, "Desired density must be higher than initial density.");
+      need(rb > v.w2, "Weight material SG is too low for the desired density.");
+      var keep = v.v * (rb - v.w2) / (rb - v.w1), dump = v.v - keep;
+      r.q("Mud to dump / jettison first", dump, "volume");
+      r.q("Mud kept", keep, "volume");
+      r.barite("Weight material to add", dump * 42 * rb);
+      r.q("Final mud volume", v.v, "volume");
+    });
+  add(G1, "Cut mud weight (volume increase)", "Volume of dilution fluid (water, base oil or light mud) needed to reduce the mud density.",
+    [F("w1", "Initial mud density", "density", 12), F("w2", "Desired mud density", "density", 11), F("v", "Starting mud volume", "volume", 500), F("wd", "Density of dilution fluid", "density", WD)],
+    "Vd = V1 × (W1 − W2) / (W2 − Wd)\nVfinal = V1 + Vd",
+    function (v, r) {
+      need(v.w2 < v.w1, "Desired density must be lower than initial density.");
+      need(v.w2 > v.wd, "Dilution fluid must be lighter than the desired density.");
+      var vd = v.v * (v.w1 - v.w2) / (v.w2 - v.wd);
+      r.q("Dilution fluid to add", vd, "volume");
+      r.q("Final mud volume", v.v + vd, "volume");
+    });
+  add(G1, "Cut mud weight (constant volume)", "Dump part of the mud, then add dilution fluid back to the same volume.",
+    [F("w1", "Initial mud density", "density", 12), F("w2", "Desired mud density", "density", 11), F("v", "Mud volume", "volume", 500), F("wd", "Density of dilution fluid", "density", WD)],
+    "Vkeep = V × (W2 − Wd) / (W1 − Wd)\nVdump = Vadd = V − Vkeep",
+    function (v, r) {
+      need(v.w2 < v.w1, "Desired density must be lower than initial density.");
+      need(v.w2 > v.wd, "Dilution fluid must be lighter than the desired density.");
+      var keep = v.v * (v.w2 - v.wd) / (v.w1 - v.wd);
+      r.q("Mud to dump first", v.v - keep, "volume");
+      r.q("Dilution fluid to add", v.v - keep, "volume");
+      r.q("Mud kept", keep, "volume");
+    });
+  add(G1, "Mix two or three muds", "Density and volume of a blend. Leave the third fluid at zero volume to mix only two.",
+    [F("d1", "Density - fluid 1", "density", 12), F("v1", "Volume - fluid 1", "volume", 300), F("d2", "Density - fluid 2", "density", 10),
+     F("v2", "Volume - fluid 2", "volume", 200), F("d3", "Density - fluid 3", "density", 0), F("v3", "Volume - fluid 3", "volume", 0)],
+    "Vmix = V1 + V2 + V3\nWmix = (W1·V1 + W2·V2 + W3·V3) / Vmix",
+    function (v, r) {
+      var vt = v.v1 + v.v2 + v.v3; need(vt > 0, "Enter at least one volume.");
+      r.q("Density of mixture", (v.d1 * v.v1 + v.d2 * v.v2 + v.d3 * v.v3) / vt, "density");
+      r.q("Volume of mixture", vt, "volume");
+    });
+  add(G1, "Add a known weight of barite", "New density and volume after adding a known weight of weight material.",
+    [F("w1", "Initial mud density", "density", 10), F("v", "Initial mud volume", "volume", 500), F("m", "Weight of barite added", "mass", 22046.2), F("sg", "SG of weight material", "sg", 4.2)],
+    "Vb = M / (42 × ρb)\nWnew = (42 × W1 × V1 + M) / [42 × (V1 + Vb)]",
+    function (v, r) {
+      var rb = WD * v.sg, vb = v.m / (42 * rb);
+      r.q("New mud density", (v.v * 42 * v.w1 + v.m) / (42 * (v.v + vb)), "density");
+      r.q("Volume increase", vb, "volume");
+      r.q("Final mud volume", v.v + vb, "volume");
+    });
+  add(G1, "Barite to raise density of a pill / system (per unit volume)", "Quick per-volume figures for weighting up (no volume entered).",
+    [F("w1", "Initial mud density", "density", 10), F("w2", "Desired mud density", "density", 12), F("sg", "SG of weight material", "sg", 4.2)],
+    "C = 42 × ρb × (W2 − W1) / (ρb − W2)   lb/bbl\nVolume increase = (W2 − W1) / (ρb − W2)   bbl/bbl\nSacks (100 lb) per 100 bbl = C",
+    function (v, r) {
+      var rb = WD * v.sg; need(v.w2 > v.w1 && rb > v.w2, "Check densities.");
+      var per = 42 * rb * (v.w2 - v.w1) / (rb - v.w2);
+      r.q("Weight material per unit of starting mud", per, "conc");
+      r.n("Volume increase per bbl of mud", (v.w2 - v.w1) / (rb - v.w2), "bbl/bbl");
+      r.n("Sacks (100 lb) per 100 bbl", per, "sx");
+    });
+
+  // 2. oil mud
+  add(G2, "Adjust OWR (add oil or water)", "Raises or lowers the oil/water ratio. Uses retort oil % to find the oil and water fractions. Optionally restores the mud weight with barite.",
+    [F("v", "Mud volume", "volume", 500), F("w", "Mud density", "density", 12), F("owr1", "Current OWR (oil %)", "percent", 70), F("oil", "Retort oil % (by volume)", "percent", 56),
+     F("owr2", "Desired OWR (oil %)", "percent", 80), F("sgo", "SG of base oil", "sg", 0.80), F("sgw", "SG of water / brine added", "sg", 1.0), F("sg", "SG of weight material", "sg", 4.2),
+     CH("keep", "Restore mud weight with barite?", 0, ["Yes", "No"])],
+    "fo = oil%/100 ;  fw = fo × (100 − OWR1) / OWR1\nRaise OWR:  Voil   = V × [fw × OWR2/(100 − OWR2) − fo]\nLower OWR:  Vwater = V × [fo × (100 − OWR2)/OWR2 − fw]\nWn = (V·W + Vf·ρf) / (V + Vf)\nBarite to restore:  Vb = (V + Vf) × (W − Wn) / (ρb − W)",
+    function (v, r) {
+      var water = owrSplit(v.oil, v.owr1), fo = v.oil / 100, fw = water / 100, owr2 = v.owr2;
+      need(owr2 > 0 && owr2 < 100, "Desired OWR must be between 0 and 100.");
+      var V = v.v, W = v.w, rb = WD * v.sg, vf, rf, what, up = owr2 >= v.owr1;
+      if (up) { vf = V * (fw * owr2 / (100 - owr2) - fo); rf = WD * v.sgo; what = "Base oil to add"; }
+      else { vf = V * (fo * (100 - owr2) / owr2 - fw); rf = WD * v.sgw; what = "Water / brine to add"; }
+      r.t("Retort water % (calculated)", fmt(water) + " %");
+      r.q(what, vf, "volume");
+      var wn = (V * W + vf * rf) / (V + vf), v2 = V + vf, bar = 0;
+      r.q("Mud density after fluid addition", wn, "density");
+      if (v.keep === 0 && W > wn) {
+        var vb = v2 * (W - wn) / (rb - W); bar = vb;
+        r.barite("Barite to restore mud weight", vb * 42 * rb);
+        r.q("Volume increase from barite", vb, "volume");
+      }
+      var vt = v2 + bar, oilV = fo * V + (up ? vf : 0), watV = fw * V + (up ? 0 : vf);
+      r.q("Final mud volume", vt, "volume");
+      r.t("New OWR", fmt(100 * oilV / (oilV + watV)) + " / " + fmt(100 * watV / (oilV + watV)));
+      r.t("New oil % / water % of mud", fmt(100 * oilV / vt) + " % / " + fmt(100 * watV / vt) + " %");
+    });
+  add(G2, "Increase water-phase salinity (WPS)", "Salt needed to raise the water phase salinity of an oil mud. WPS in ppm = weight % x 10,000.",
+    [F("v", "Mud volume", "volume", 500), F("wat", "Retort water % (by volume)", "percent", 20), CH("salt", "Salt type", 0, SALT3),
+     F("p1", "Current WPS", "ppm", 200000), F("p2", "Desired WPS", "ppm", 250000), F("pur", "Salt purity", "percent", 95)],
+    "w = WPS / 1,000,000\nMw = V × water%/100 × 42 × 8.345          (lb of water)\nSalt = Mw × [w2/(1 − w2) − w1/(1 − w1)] / purity\nVbrine = Mw / [(1 − w) × 42 × 8.345 × SGbr(w)]",
+    function (v, r) {
+      var s = getSalt(SALT3[v.salt]), w1 = v.p1 / 1e6, w2 = v.p2 / 1e6;
+      need(w2 > w1, "Desired WPS must be higher than current WPS.");
+      need(w2 * 100 <= s.max, "Desired WPS exceeds saturation for " + s.name + " (" + fmt(s.max * 1e4) + " ppm).");
+      need(v.pur > 0 && v.pur <= 100, "Purity must be 1-100 %.");
+      var wl = v.v * v.wat / 100 * 42 * WD, salt = wl * (w2 / (1 - w2) - w1 / (1 - w1));
+      var b1 = wl / (1 - w1) / (42 * WD * s.SG(w1 * 100)), b2 = wl / (1 - w2) / (42 * WD * s.SG(w2 * 100));
+      r.mass("Salt to add (as received)", salt / (v.pur / 100), saltProduct(s.name));
+      r.q("Volume increase (brine)", b2 - b1, "volume");
+      r.t("Brine SG: current -> new", fmt(s.SG(w1 * 100)) + " -> " + fmt(s.SG(w2 * 100)));
+      var t = s.TCT(w2 * 100); if (isFinite(t)) r.q("Approx. crystallization point (new)", t, "temp");
+    });
+  function addFluidCalc(name, help, isOil) {
+    add(G2, name, help,
+      [F("v", "Initial mud volume", "volume", 500), F("w", "Initial mud density", "density", 12), F("owr", "Initial OWR (oil %)", "percent", isOil ? 75 : 80),
+       F("oil", "Initial retort oil %", "percent", isOil ? 55 : 60), F("va", isOil ? "Base oil volume added" : "Water volume added", "volume", isOil ? 30 : 20),
+       F("sga", isOil ? "SG of base oil" : "SG of water / brine", "sg", isOil ? 0.8 : 1.0)],
+      isOil ? "Wnew = (V·W + Vo·ρo) / (V + Vo)\nVoil = fo·V + Vo ;  Vwater = fw·V\nOWR = 100 × Voil / (Voil + Vwater)"
+            : "Wnew = (V·W + Vw·ρw) / (V + Vw)\nVoil = fo·V ;  Vwater = fw·V + Vw\nOWR = 100 × Voil / (Voil + Vwater)",
+      function (v, r) {
+        var water = owrSplit(v.oil, v.owr), V = v.v, va = v.va;
+        var oV = v.oil / 100 * V + (isOil ? va : 0), wV = water / 100 * V + (isOil ? 0 : va);
+        r.q("New mud density", (V * v.w + va * WD * v.sga) / (V + va), "density");
+        r.q("New mud volume", V + va, "volume");
+        r.t("Resultant OWR", fmt(100 * oV / (oV + wV)) + " / " + fmt(100 * wV / (oV + wV)));
+        r.t("Resultant oil % / water %", fmt(100 * oV / (V + va)) + " % / " + fmt(100 * wV / (V + va)) + " %");
+      });
+  }
+  addFluidCalc("Add a known volume of water to oil mud", "New density, OWR and oil % after a known water (or brine) addition.", false);
+  addFluidCalc("Add a known volume of base oil to oil mud", "New density, OWR and oil % after a known base oil addition.", true);
+  add(G2, "Suspected water contamination of oil mud", "Estimates the water influx from the drop in mud density (assumes the density drop is caused only by water).",
+    [F("w1", "Initial mud density", "density", 12), F("w2", "Contaminated mud density", "density", 11.8), F("v", "Initial mud volume", "volume", 500),
+     F("owr", "Initial OWR (oil %)", "percent", 80), F("oil", "Initial retort oil %", "percent", 60), F("sgw", "SG of contaminating water", "sg", 1.0)],
+    "Vwater = V × (W1 − W2) / (W2 − ρw)\nOWR = 100 × fo·V / [fo·V + fw·V + Vwater]",
+    function (v, r) {
+      var water = owrSplit(v.oil, v.owr), rw = WD * v.sgw;
+      need(v.w2 < v.w1 && v.w2 > rw, "Contaminated density must be between water and initial density.");
+      var vw = v.v * (v.w1 - v.w2) / (v.w2 - rw), oV = v.oil / 100 * v.v, wV = water / 100 * v.v + vw;
+      r.q("Volume of water contamination", vw, "volume");
+      r.q("Mud volume now", v.v + vw, "volume");
+      r.t("Resultant OWR", fmt(100 * oV / (oV + wV)) + " / " + fmt(100 * wV / (oV + wV)));
+    });
+
+  // 3. basic mixes & slugs
+  add(G3, "Basic mix - water-based mud", "Water and weight material needed to build a simple weighted water mud (no other products).",
+    [F("v", "Volume of mud", "volume", 500), F("w", "Mud density", "density", 11), F("sgw", "SG of base water", "sg", 1.0), F("sg", "SG of weight material", "sg", 4.2)],
+    "Vb = V × (W − ρw) / (ρb − ρw)\nVwater = V − Vb ;  M = 42 × ρb × Vb",
+    function (v, r) {
+      var rw = WD * v.sgw, rb = WD * v.sg;
+      need(v.w >= rw && v.w < rb, "Mud density must be between water and weight material.");
+      var vb = v.v * (v.w - rw) / (rb - rw);
+      r.q("Volume of water", v.v - vb, "volume");
+      r.q("Volume of weight material", vb, "volume");
+      r.barite("Weight of weight material", vb * 42 * rb);
+    });
+  add(G3, "Basic mix - oil-based mud", "Base oil, water/brine and weight material for a simple oil mud at a set OWR (no other products).",
+    [F("v", "Volume of mud", "volume", 500), F("w", "Mud density", "density", 12), F("owr", "OWR (oil %)", "percent", 80), F("sgo", "SG of base oil", "sg", 0.80),
+     F("sgw", "SG of water / brine", "sg", 1.0), F("sg", "SG of weight material", "sg", 4.2)],
+    "ρliq = fo·ρo + (1 − fo)·ρw          (fo = OWR/100)\nVb = V × (W − ρliq) / (ρb − ρliq)\nVliq = V − Vb ;  Voil = fo·Vliq ;  Vwater = (1 − fo)·Vliq",
+    function (v, r) {
+      var fo = v.owr / 100; need(fo > 0 && fo <= 1, "OWR must be 1-100.");
+      var rl = fo * WD * v.sgo + (1 - fo) * WD * v.sgw, rb = WD * v.sg;
+      need(v.w >= rl && v.w < rb, "Mud density is below the liquid density (" + show(rl, "density") + ") or above weight material.");
+      var vb = v.v * (v.w - rl) / (rb - rl), vl = v.v - vb;
+      r.q("Volume of base oil", vl * fo, "volume");
+      r.q("Volume of water / brine", vl * (1 - fo), "volume");
+      r.q("Volume of weight material", vb, "volume");
+      r.barite("Weight of weight material", vb * 42 * rb);
+    });
+  add(G3, "Slug - flowback (pit gain) after pumping", "Estimated volume of mud that flows back from the drill pipe after a heavy slug is pumped.",
+    [F("w", "Mud density", "density", 10), F("ws", "Slug density", "density", 12), F("vs", "Slug volume", "volume", 25)],
+    "Vflowback = Vs × (Ws − W) / W",
+    function (v, r) { need(v.ws > v.w && v.w > 0, "Slug must be heavier than the mud."); r.q("Flowback volume of mud", v.vs * (v.ws - v.w) / v.w, "volume"); });
+  add(G3, "Slug size (volume for a dry-pipe length)", "Slug volume needed to give the required length of dry pipe.",
+    [F("w", "Mud density", "density", 10), F("ws", "Slug density", "density", 12), F("l", "Length of dry pipe required", "depth", 300), F("id", "Drill pipe ID", "diameter", 4.276)],
+    "Cp = ID² / 1029.4                (bbl/ft)\nVs = Cp × L × W / (Ws − W)\nSlug length = Vs / Cp",
+    function (v, r) {
+      need(v.ws > v.w, "Slug must be heavier than the mud.");
+      var c = v.id * v.id / 1029.4, vs = c * v.l * v.w / (v.ws - v.w);
+      r.q("Drill pipe capacity", c, "capacity"); r.q("Slug volume", vs, "volume");
+      r.q("Slug length in pipe", vs / c, "depth"); r.q("Pit gain (flowback)", vs * (v.ws - v.w) / v.w, "volume");
+    });
+  add(G3, "Slug weight (density for a given slug volume)", "Slug density needed to give the required length of dry pipe with a chosen slug volume.",
+    [F("w", "Mud density", "density", 10), F("vs", "Slug volume", "volume", 25), F("l", "Length of dry pipe required", "depth", 300), F("id", "Drill pipe ID", "diameter", 4.276), F("sg", "SG of weight material", "sg", 4.2)],
+    "Ls = Vs / Cp ;  Ws = W + L × W / Ls\nMud to slug pit = Vs × (ρb − Ws) / (ρb − W)\nBarite = 42 × ρb × (Vs − mud to slug pit)",
+    function (v, r) {
+      var c = v.id * v.id / 1029.4; need(v.vs > 0, "Enter slug volume.");
+      var ls = v.vs / c, ws = v.w + v.l * v.w / ls, rb = WD * v.sg;
+      r.q("Slug density required", ws, "density"); r.q("Slug length in pipe", ls, "depth");
+      if (rb > ws) { var sv = v.vs * (rb - ws) / (rb - v.w); r.q("Mud to take into slug pit", sv, "volume"); r.barite("Barite to add to it", (v.vs - sv) * 42 * rb); }
+      else r.warn("Slug density exceeds what the weight material can give.");
+    });
+
+  // 4. volumes & hydraulics
+  add(G4, "Hole, pipe and annular capacity", "Capacities and displacements for one hole / pipe combination.",
+    [F("dh", "Hole size or casing ID", "diameter", 8.5), F("od", "Pipe OD", "diameter", 5), F("id", "Pipe ID", "diameter", 4.276), F("l", "Length", "depth", 1000)],
+    "Hole    = Dh² / 1029.4\nAnnulus = (Dh² − OD²) / 1029.4\nPipe    = ID² / 1029.4\nSteel (open end) = (OD² − ID²) / 1029.4 ;  closed end = OD² / 1029.4\nVolume = capacity × L",
+    function (v, r) {
+      need(v.dh > v.od && v.od > v.id, "Need hole > pipe OD > pipe ID.");
+      var ch = v.dh * v.dh / 1029.4, ca = (v.dh * v.dh - v.od * v.od) / 1029.4, cp = v.id * v.id / 1029.4;
+      r.q("Hole capacity", ch, "capacity"); r.q("Annular capacity", ca, "capacity"); r.q("Pipe capacity", cp, "capacity");
+      r.q("Steel displacement (open end)", (v.od * v.od - v.id * v.id) / 1029.4, "capacity"); r.q("Closed-end displacement", v.od * v.od / 1029.4, "capacity");
+      r.blank(); r.q("Hole volume over length", ch * v.l, "volume"); r.q("Annular volume over length", ca * v.l, "volume"); r.q("Pipe volume over length", cp * v.l, "volume");
+    });
+  add(G4, "Well volume & circulation times", "Hole, string and annulus volumes with bottoms-up and full circulation strokes/time. Drill pipe length = TD - HWDP - BHA.",
+    [F("shoe", "Casing shoe depth (MD)", "depth", 8000), F("cid", "Casing ID", "diameter", 8.835), F("td", "Total depth (MD)", "depth", 10000), F("dh", "Open hole size", "diameter", 8.5),
+     F("wo", "Open hole washout", "percent", 10), F("dpod", "Drill pipe OD", "diameter", 5), F("dpid", "Drill pipe ID", "diameter", 4.276),
+     F("hwl", "HWDP length", "depth", 600), F("hwod", "HWDP OD", "diameter", 5), F("hwid", "HWDP ID", "diameter", 3),
+     F("bhal", "BHA / drill collar length", "depth", 300), F("bhaod", "BHA OD", "diameter", 6.5), F("bhaid", "BHA ID", "diameter", 2.8125),
+     F("surf", "Surface (pit) volume", "volume", 800), F("po", "Pump output", "pumpout", 0.1), F("spm", "Pump speed (SPM)", "none", 100)],
+    "Vhole = Ccsg × Lshoe + Coh × (TD − Lshoe) × (1 + washout/100)\nVstring = Σ ID²·L / 1029.4 ;  Vann = Vhole − Σ OD²·L / 1029.4\nStrokes = volume / pump output ;  time = strokes / SPM\nQ (gpm) = 42 × output × SPM",
+    function (v, r) {
+      var shoe = Math.min(v.shoe, v.td), td = v.td;
+      var hole = v.cid * v.cid / 1029.4 * shoe + v.dh * v.dh / 1029.4 * (td - shoe) * (1 + v.wo / 100);
+      var dpl = td - v.hwl - v.bhal; need(dpl >= 0, "HWDP + BHA longer than TD.");
+      var sc = (v.dpid * v.dpid * dpl + v.hwid * v.hwid * v.hwl + v.bhaid * v.bhaid * v.bhal) / 1029.4;
+      var cl = (v.dpod * v.dpod * dpl + v.hwod * v.hwod * v.hwl + v.bhaod * v.bhaod * v.bhal) / 1029.4, ann = hole - cl;
+      r.q("Hole volume (no string)", hole, "volume"); r.q("String capacity", sc, "volume"); r.q("String steel displacement", cl - sc, "volume");
+      r.q("Annular volume", ann, "volume"); r.q("Hole volume with string in", sc + ann, "volume"); r.q("Total circulating volume (+surface)", sc + ann + v.surf, "volume");
+      if (v.po > 0) {
+        r.blank();
+        var sS = sc / v.po, sB = ann / v.po, sT = (sc + ann + v.surf) / v.po;
+        r.n("Surface-to-bit strokes", sS, "stk"); r.n("Bottoms-up strokes", sB, "stk"); r.n("Total circulation strokes", sT, "stk");
+        if (v.spm > 0) { r.q("Surface-to-bit time", sS / v.spm, "time"); r.q("Bottoms-up time", sB / v.spm, "time"); r.q("Total circulation time", sT / v.spm, "time"); r.q("Flow rate", v.po * v.spm * 42, "flow"); }
+      }
+    });
+  add(G4, "Pump output", "Mud pump output per stroke and flow rate. For a duplex pump enter the rod diameter.",
+    [CH("type", "Pump type", 0, ["Triplex (single acting)", "Duplex (double acting)"]), F("d", "Liner diameter", "diameter", 6), F("s", "Stroke length", "diameter", 12),
+     F("rod", "Rod diameter (duplex only)", "diameter", 2.5), F("eff", "Volumetric efficiency", "percent", 95), F("spm", "Pump speed (SPM)", "none", 100)],
+    "Triplex: bbl/stk = 0.000243 × D² × S × eff\nDuplex:  bbl/stk = 0.000162 × S × (2D² − d²) × eff\nQ (gpm) = 42 × bbl/stk × SPM",
+    function (v, r) {
+      var e = v.eff / 100, bps = v.type === 0 ? 0.000243 * v.d * v.d * v.s * e : 0.000162 * v.s * (2 * v.d * v.d - v.rod * v.rod) * e;
+      r.q("Pump output", bps, "pumpout"); r.q("Flow rate", bps * v.spm * 42, "flow"); r.n("Output", bps * v.spm, "bbl/min");
+    });
+  add(G4, "Annular velocity", "Average annular velocity for a flow rate and annulus.",
+    [F("q", "Flow rate", "flow", 500), F("dh", "Hole size or casing ID", "diameter", 8.5), F("od", "Pipe OD", "diameter", 5)],
+    "AV (ft/min) = 24.51 × Q / (Dh² − OD²)",
+    function (v, r) { need(v.dh > v.od, "Hole must be larger than pipe OD."); r.q("Annular velocity", 24.51 * v.q / (v.dh * v.dh - v.od * v.od), "velocity"); });
+  add(G4, "Cuttings generated", "Volume and weight of cuttings drilled per hour (gauge hole).",
+    [F("dh", "Hole size", "diameter", 12.25), F("rop", "Rate of penetration", "rate", 60), F("sg", "Cuttings SG", "sg", 2.6), F("por", "Porosity", "percent", 0)],
+    "Vc (bbl/hr) = Dh² / 1029.4 × ROP × (1 − porosity)\nMc (lb/hr) = 42 × 8.345 × SGc × Vc",
+    function (v, r) {
+      var vol = v.dh * v.dh / 1029.4 * v.rop * (1 - v.por / 100);
+      r.n("Cuttings volume", fromInt("volume", vol), uname("volume") + "/hr");
+      r.n("Cuttings weight", fromInt("mass", vol * 42 * WD * v.sg), uname("mass") + "/hr");
+    });
+  add(G4, "Tank / pit volume", "Volume of a tank and volume per unit height. Dimensions are in depth/length units.",
+    [CH("shape", "Tank shape", 0, ["Rectangular", "Vertical cylinder", "Horizontal cylinder"]), F("l", "Length (rect./horizontal)", "depth", 30),
+     F("wdt", "Width or diameter", "depth", 10), F("h", "Total height", "depth", 8), F("lev", "Fluid level", "depth", 6)],
+    "Rectangular: L × W × H ;  Vertical cylinder: π/4 × D² × H\nHorizontal cylinder at level h:  L × [r²·acos((r−h)/r) − (r−h)·√(2rh − h²)]\nbbl = ft³ / 5.6146",
+    function (v, r) {
+      var L = v.l, Wd = v.wdt, H = v.h, lev = Math.min(v.lev, v.shape === 2 ? Wd : H), tot, atl, per;
+      if (v.shape === 0) { tot = L * Wd * H; atl = L * Wd * lev; per = L * Wd; }
+      else if (v.shape === 1) { var a = Math.PI * Wd * Wd / 4; tot = a * H; atl = a * lev; per = a; }
+      else { var rr = Wd / 2; tot = Math.PI * rr * rr * L; atl = (rr * rr * Math.acos((rr - lev) / rr) - (rr - lev) * Math.sqrt(Math.max(0, 2 * rr * lev - lev * lev))) * L; per = NaN; }
+      r.q("Total tank volume", tot / 5.6146, "volume"); r.q("Volume at fluid level", atl / 5.6146, "volume");
+      if (isFinite(per)) { r.n("Volume per unit height", fromInt("volume", per / 5.6146) / fromInt("depth", 1), uname("volume") + "/" + uname("depth")); r.n("Volume per inch", per / 5.6146 / 12, "bbl/in"); }
+    });
+  add(G4, "ECD & annular pressure loss (Bingham)", "Annular pressure loss for one annular section (Bingham plastic, laminar) and the resulting ECD.",
+    [F("w", "Mud density", "density", 10), F("pv", "Plastic viscosity", "visc", 20), F("yp", "Yield point", "yp", 15), F("q", "Flow rate", "flow", 500),
+     F("dh", "Hole size or casing ID", "diameter", 8.5), F("od", "Pipe OD", "diameter", 5), F("l", "Section length (MD)", "depth", 10000), F("tvd", "True vertical depth", "depth", 10000)],
+    "AV = 24.51 × Q / (Dh² − OD²) ;  v = AV / 60 (ft/s)\nAPL = PV·v·L / [1500 × (Dh − OD)²] + YP·L / [225 × (Dh − OD)]\nECD = W + APL / (0.052 × TVD)",
+    function (v, r) {
+      var dd = v.dh - v.od; need(dd > 0, "Hole must be larger than pipe OD.");
+      var av = 24.51 * v.q / (v.dh * v.dh - v.od * v.od), apl = v.pv * (av / 60) * v.l / (1500 * dd * dd) + v.yp * v.l / (225 * dd);
+      r.q("Annular velocity", av, "velocity"); r.q("Annular pressure loss", apl, "pressure"); r.q("ECD", v.w + apl / (0.052 * v.tvd), "density");
+      r.line("(Laminar-flow estimate; use a hydraulics program for detailed design.)");
+    });
+
+  // 5. pressure
+  add(G5, "Hydrostatic pressure", "Hydrostatic pressure and gradient of a mud column.",
+    [F("w", "Mud density", "density", 10), F("tvd", "True vertical depth", "depth", 10000)],
+    "P = 0.052 × W × TVD\nGradient = 0.052 × W   (psi/ft)",
+    function (v, r) { r.q("Hydrostatic pressure", 0.052 * v.w * v.tvd, "pressure"); r.q("Pressure gradient", 0.052 * v.w, "gradient"); });
+  add(G5, "Equivalent mud weight / leak-off test", "EMW from a pressure at depth, LOT/FIT result and MAASP.",
+    [F("p", "Surface pressure (LOT/FIT) or extra pressure", "pressure", 1500), F("w", "Mud density in hole during test", "density", 10),
+     F("tvd", "Shoe / point TVD", "depth", 8000), F("wnow", "Current mud density (for MAASP)", "density", 11)],
+    "EMW = Wtest + P / (0.052 × TVD)\nPfrac = 0.052 × EMW × TVD\nMAASP = (EMW − Wcurrent) × 0.052 × TVD",
+    function (v, r) {
+      need(v.tvd > 0, "Enter TVD.");
+      var emw = v.w + v.p / (0.052 * v.tvd);
+      r.q("Equivalent mud weight", emw, "density"); r.q("Fracture / test pressure at depth", 0.052 * emw * v.tvd, "pressure"); r.q("MAASP with current mud", (emw - v.wnow) * 0.052 * v.tvd, "pressure");
+    });
+  add(G5, "Kill sheet basics", "Kill mud weight, circulating pressures, influx gradient and barite for weighting up the active system.",
+    [F("omw", "Original mud density", "density", 10), F("sidpp", "SIDPP", "pressure", 500), F("sicp", "SICP", "pressure", 700), F("tvd", "Hole TVD", "depth", 10000),
+     F("scr", "Slow circulating rate pressure", "pressure", 600), F("gain", "Pit gain", "volume", 20), F("ca", "Annular capacity around BHA", "capacity", 0.0291),
+     F("vol", "Active system volume", "volume", 1200), F("sg", "SG of weight material", "sg", 4.2), F("margin", "Trip / safety margin", "density", 0)],
+    "KMW = OMW + SIDPP / (0.052 × TVD) + margin\nICP = SCR + SIDPP ;  FCP = SCR × KMW / OMW\nInflux height h = pit gain / Ca\nInflux gradient = 0.052 × OMW − (SICP − SIDPP) / h\n  < 0.25 gas ;  0.25–0.35 oil/gas ;  > 0.35 salt water\nBarite: Vb = Vactive × (KMW − OMW) / (ρb − KMW)",
+    function (v, r) {
+      var kmw = v.omw + v.sidpp / (0.052 * v.tvd) + v.margin;
+      r.q("Kill mud weight", kmw, "density"); r.q("Initial circulating pressure (ICP)", v.scr + v.sidpp, "pressure"); r.q("Final circulating pressure (FCP)", v.scr * kmw / v.omw, "pressure");
+      if (v.ca > 0 && v.gain > 0) {
+        var h = v.gain / v.ca, g = 0.052 * v.omw - (v.sicp - v.sidpp) / h;
+        r.q("Influx height", h, "depth"); r.q("Influx gradient", g, "gradient");
+        r.t("Probable influx", g < 0.25 ? "Gas" : (g < 0.35 ? "Oil / gas mixture" : "Salt water / liquid"));
+      }
+      var rb = WD * v.sg;
+      if (rb > kmw) { var vb = v.vol * (kmw - v.omw) / (rb - kmw); r.barite("Barite to weight up active system", vb * 42 * rb); r.q("Volume increase", vb, "volume"); }
+    });
+
+  // 6. brines
+  add(G6, "Brine from dry salt", "Salt and water needed to make a single-salt brine, by target density or by weight %.",
+    [CH("salt", "Salt type", 0, SALT3), CH("by", "Target given as", 0, ["Density", "Weight %"]), F("w", "Target brine density", "density", 10.5),
+     F("wt", "Target weight % salt", "percent", 20), F("v", "Brine volume required", "volume", 500), F("pur", "Salt purity", "percent", 95)],
+    "SG = 1.0036 × (0.99707 + A·wt + B·wt²)   (wt solved by bisection for a target density)\nSalt  = 42 × 8.345 × SG × wt/100   lb per bbl brine\nWater = SG × (1 − wt/100)          bbl per bbl brine\nCl⁻ = wt/100 × SG × 10⁶ × Cl fraction ;  salt as received = salt / purity",
+    function (v, r) {
+      var s = getSalt(SALT3[v.salt]), wt = v.by === 0 ? s.wtFromSG(v.w / WD) : v.wt;
+      need(wt > 0, "Target must be heavier than fresh water.");
+      need(wt <= s.max + 1e-6, s.name + " saturates at about " + fmt(s.max) + " wt% (" + show(WD * s.SG(s.max), "density") + ").");
+      var sg = s.SG(wt), spb = LBSG * sg * wt / 100, wpb = sg * (1 - wt / 100);
+      r.t("Weight % salt", fmt(wt) + " %"); r.q("Brine density", WD * sg, "density"); r.t("Chlorides", fmt(s.clFromWt(wt)) + " mg/L");
+      r.q("Salt per unit volume of brine", spb, "conc"); r.n("Water per bbl of brine", wpb, "bbl");
+      var t = s.TCT(wt); if (isFinite(t)) r.q("Approx. crystallization point", t, "temp");
+      r.blank(); r.q("Fresh water required", wpb * v.v, "volume"); r.mass("Salt required (as received)", spb * v.v / (v.pur / 100), saltProduct(s.name));
+    });
+  add(G6, "Brine blending / dilution", "Volumes of a heavy and a light brine (or water) to make a target density. Assumes volumes are additive.",
+    [F("v", "Final volume required", "volume", 500), F("wt", "Target density", "density", 10.5), F("w1", "Heavy brine density", "density", 11.6), F("w2", "Light brine / water density", "density", WD)],
+    "Vheavy = V × (Wt − Wlight) / (Wheavy − Wlight)\nVlight = V − Vheavy",
+    function (v, r) {
+      need(v.w1 > v.wt && v.wt > v.w2, "Target must lie between the two densities.");
+      var v1 = v.v * (v.wt - v.w2) / (v.w1 - v.w2);
+      r.q("Heavy brine", v1, "volume"); r.q("Light brine / water", v.v - v1, "volume"); r.t("Heavy brine fraction", fmt(100 * v1 / v.v) + " %");
+    });
+  add(G6, "Chlorides to salt concentration", "Converts a chloride titration to salt weight %, mg/L, brine density and crystallization point.",
+    [CH("salt", "Salt type", 1, SALT3), F("cl", "Chlorides of the brine / filtrate", "cl", 60000)],
+    "wt = (Cl⁻ / Cl fraction) / (SG(wt) × 10⁴)    (iterated)\nSalt mg/L = Cl⁻ / Cl fraction ;  ppm = wt × 10⁴\nSG = 1.0036 × (0.99707 + A·wt + B·wt²)",
+    function (v, r) {
+      var s = getSalt(SALT3[v.salt]), wt = s.wtFromCl(v.cl);
+      need(wt <= s.max * 1.02, "Chlorides exceed saturation for " + s.name + ".");
+      r.t("Weight % salt", fmt(wt) + " %"); r.t("Salt concentration", fmt(v.cl / s.clf) + " mg/L"); r.t("Salinity", fmt(wt * 1e4) + " ppm");
+      r.q("Brine density", WD * s.SG(wt), "density"); r.q("Salt per unit volume of brine", LBSG * s.SG(wt) * wt / 100, "conc");
+      var t = s.TCT(wt); if (isFinite(t)) r.q("Approx. crystallization point", t, "temp");
+    });
+
+  // 7. mud testing
+  add(G7, "Rheology from viscometer readings", "PV, YP, low-shear YP and power-law n/K from 600/300/6/3 rpm dial readings.",
+    [F("r600", "600 rpm reading", "dial", 60), F("r300", "300 rpm reading", "dial", 38), F("r6", "6 rpm reading", "dial", 9), F("r3", "3 rpm reading", "dial", 7)],
+    "PV = θ600 − θ300 ;  YP = θ300 − PV ;  AV = θ600 / 2\nLSYP = 2·θ3 − θ6\nn = 3.32 × log10(θ600 / θ300) ;  K = 510 × θ300 / 511ⁿ  (eq. cP)",
+    function (v, r) {
+      need(v.r600 > v.r300 && v.r300 > 0, "600 rpm must be higher than 300 rpm.");
+      var pv = v.r600 - v.r300, yp = v.r300 - pv, n = 3.32 * Math.log10(v.r600 / v.r300), k = 510 * v.r300 / Math.pow(511, n);
+      r.q("Plastic viscosity (PV)", pv, "visc"); r.q("Yield point (YP)", yp, "yp"); r.q("Apparent viscosity", v.r600 / 2, "visc");
+      if (v.r3 > 0) r.q("Low-shear yield point (2x3rpm - 6rpm)", 2 * v.r3 - v.r6, "yp");
+      r.n("Flow behaviour index n", n, ""); r.n("Consistency index K", k, "eq. cP");
+    });
+  function solidsTail(r, v, brine, sgb, vs) {
+    var asg = (100 * v.w / WD - brine * sgb - v.oil * v.sgo) / vs;
+    var lgs = Math.max(0, Math.min(vs, vs * (v.sgh - asg) / (v.sgh - v.sgl)));
+    r.n("Average SG of solids", asg, "");
+    r.t("Low-gravity solids", fmt(lgs) + " %  = " + show(lgs * 3.5 * v.sgl, "conc"));
+    r.t("High-gravity solids", fmt(vs - lgs) + " %  = " + show((vs - lgs) * 3.5 * v.sgh, "conc"));
+  }
+  add(G7, "Solids analysis - water-based mud", "Corrected solids, low/high gravity solids from mud weight and retort (NaCl salt correction from chlorides).",
+    [F("w", "Mud density", "density", 11), F("wat", "Retort water %", "percent", 84), F("oil", "Retort oil %", "percent", 0), F("cl", "Filtrate chlorides", "cl", 20000),
+     F("sgo", "SG of oil", "sg", 0.8), F("sgl", "SG of low-gravity solids", "sg", 2.6), F("sgh", "SG of high-gravity solids", "sg", 4.2)],
+    "SGbr = 1 + 1.94×10⁻⁶ × Cl^0.95 ;  w = (Cl / 0.6066) / (SGbr × 10⁶)\nVbrine = Vw / [SGbr × (1 − w)] ;  Vs = 100 − Vbrine − Vo\nASG = [100·W/8.345 − Vbrine·SGbr − Vo·SGo] / Vs\nLGS = Vs × (SGh − ASG) / (SGh − SGl) ;  HGS = Vs − LGS\nlb/bbl = 3.5 × SG × vol%",
+    function (v, r) {
+      var cl = v.cl, sgb = cl > 0 ? 1 + 1.94e-6 * Math.pow(cl, 0.95) : 1, w = cl > 0 ? (cl / 0.6066) / (sgb * 1e6) : 0;
+      var brine = v.wat / (sgb * (1 - w)), vs = 100 - brine - v.oil;
+      need(vs > 0, "Retort water + oil leave no room for solids.");
+      r.n("Brine SG / salt wt%", sgb, "/ " + fmt(w * 100) + " %"); r.t("Corrected brine volume", fmt(brine) + " %"); r.t("Corrected solids", fmt(vs) + " %");
+      solidsTail(r, v, brine, sgb, vs);
+    });
+  add(G7, "Oil mud retort & salinity analysis", "OWR, water phase salinity (CaCl2) from whole-mud chlorides, corrected solids and excess lime.",
+    [F("w", "Mud density", "density", 12), F("oil", "Retort oil %", "percent", 60), F("wat", "Retort water %", "percent", 18), F("cl", "Whole mud chlorides", "cl", 40000),
+     F("pom", "Pom (ml 0.1N H2SO4)", "none", 4), F("sgo", "SG of base oil", "sg", 0.8), F("sgl", "SG of low-gravity solids", "sg", 2.6), F("sgh", "SG of high-gravity solids", "sg", 4.2)],
+    "OWR = 100 × Vo / (Vo + Vw)\nCaCl2 wt% = 100 × 1.565·Clm / (1.565·Clm + 10000·Vw) ;  WPS = wt% × 10⁴\nVbrine = Vw / [SGbr × (1 − w)] ;  Vs = 100 − Vo − Vbrine\nLGS / HGS as WBM solids analysis\nExcess lime = 1.295 × Pom   lb/bbl",
+    function (v, r) {
+      need(v.oil + v.wat > 0 && v.oil + v.wat < 100, "Check retort values.");
+      var owr = 100 * v.oil / (v.oil + v.wat), wtp = v.wat > 0 ? 100 * 1.565 * v.cl / (1.565 * v.cl + 10000 * v.wat) : 0;
+      var s = getSalt("CaCl2"), sgb = s.SG(wtp), brine = v.wat / (sgb * (1 - wtp / 100)), vs = 100 - v.oil - brine;
+      r.t("OWR", fmt(owr) + " / " + fmt(100 - owr)); r.t("Water phase salinity (CaCl2)", fmt(wtp) + " wt% = " + fmt(wtp * 1e4) + " ppm"); r.n("Brine SG", sgb, "");
+      var t = s.TCT(wtp); if (isFinite(t)) r.q("Approx. brine crystallization point", t, "temp");
+      r.t("Corrected brine volume", fmt(brine) + " %"); r.t("Corrected solids", fmt(vs) + " %");
+      if (vs > 0) solidsTail(r, v, brine, sgb, vs);
+      r.q("Excess lime (1.295 x Pom)", 1.295 * v.pom, "conc");
+    });
+
+  // ---------------------------------------------------------------- formulation
+  var EQ_FORMULATION = "Brine:  OBM w = WPS / 1,000,000;  WBM w from chlorides;  SGbr = 1.0036(0.99707 + A·wt + B·wt²)\nProduct i:  m = C × V ;  v = m / (42 × 8.345 × SG)\nρliq = fo·ρo + (1 − fo)·ρbr          (fo = OWR/100)\nVwm  = [V·W − Σm/42 − (V − Σv)·ρliq] / (ρb − ρliq)\nVliq = V − Σv − Vwm ;  Voil = fo·Vliq ;  Vbrine = Vliq − Voil\nWater = Vbrine × SGbr × (1 − w)\nSalt  = Vbrine × 42 × ρbr × w / purity\nPackages = ceiling(M / package mass) ;  Cost = packages × price";
+  var EQ_SALT = "SG = 1.0036 × (0.99707 + A·wt + B·wt²)      wt = salt weight %\nSalt lb/bbl brine = 350.5 × SG × wt/100     Water bbl/bbl brine = SG × (1 − wt/100)\nSalt mg/L = wt/100 × SG × 10⁶               Chlorides mg/L = salt mg/L × Cl fraction\nBrine vol / water vol = 1 / [SG × (1 − wt/100)]     WPS ppm = wt × 10,000";
+  var EQ_COMMON = "Units in equations: W ppg, V bbl, M lb, L/TVD ft, D in, P psi, Q gpm, C lb/bbl\nρw = 8.345 ppg (fresh water)   ρb = 8.345 × SG(weight material)   ρo = 8.345 × SG(oil)\n1 bbl = 42 gal;  mass of weight material M = 42 × ρb × Vb";
+
+  function formulate(obm, V, W, oilPct, saltName, salinity, purity, sgWM, sgOil, lines) {
+    var r = new Res();
+    r.title((obm ? "Oil" : "Water") + "-based mud formulation from scratch");
+    r.line("To mix " + show(V, "volume") + " of " + show(W, "density") + " mud" + (obm ? " with OWR " + fmt(oilPct) + "/" + fmt(100 - oilPct) : (oilPct > 0 ? " with " + fmt(oilPct) + " % oil in liquid" : "")));
+    need(V > 0, "Enter a volume to mix."); need(oilPct >= 0 && oilPct <= 100, "Oil % must be 0-100."); need(purity > 0 && purity <= 100, "Salt purity must be 1-100 %.");
+    var w = 0, sgBr = 1.0, salt = null;
+    if (saltName === "Seawater") sgBr = 1.025;
+    else if (saltName && salinity > 0) {
+      salt = getSalt(saltName);
+      var wt = obm ? salinity / 1e4 : salt.wtFromCl(salinity);
+      need(wt <= salt.max + 1e-6, "Salinity is above saturation for " + salt.name + " (max " + fmt(salt.max * 1e4) + " ppm WPS / " + fmt(salt.clFromWt(salt.max)) + " mg/L Cl).");
+      w = wt / 100; sgBr = salt.SG(wt);
+    }
+    var rBr = WD * sgBr, rOil = WD * sgOil, rWM = WD * sgWM, fo = oilPct / 100, rLiq = fo * rOil + (1 - fo) * rBr, sumM = 0, sumV = 0;
+    lines.forEach(function (l) { if (l.conc > 0) { var m = l.conc * V; sumM += m; sumV += m / (42 * WD * (+l.p.sg || 1)); } });
+    var vWM = (V * W - sumM / 42 - (V - sumV) * rLiq) / (rWM - rLiq);
+    if (vWM < 0) { r.warn("No weight material needed: the products and liquids alone give " + show((sumM / 42 + (V - sumV) * rLiq) / V, "density") + "."); vWM = 0; }
+    var vLiq = V - sumV - vWM; need(vLiq > 0, "Products and weight material take up the whole volume - density too high.");
+    var vOil = fo * vLiq, vBrine = vLiq - vOil, vWater = vBrine * sgBr * (1 - w), saltLb = vBrine * 42 * rBr * w / (purity / 100);
+    r.blank(); r.title("Basic requirements");
+    if (fo > 0) r.q("Base oil", vOil, "volume");
+    r.q(saltName === "Seawater" ? "Seawater" : "Water", vWater, "volume");
+    if (salt) {
+      r.q("Brine volume", vBrine, "volume"); r.t("Brine salt / SG", salt.name + " " + fmt(w * 100) + " wt% / " + fmt(sgBr));
+      var t = salt.TCT(w * 100); if (isFinite(t)) r.q("Approx. brine crystallization point", t, "temp");
+    }
+    r.q("Weight material volume", vWM, "volume");
+    r.blank(); r.title("Total amount of each product");
+    var cost = 0;
+    function line(name, lb, p) {
+      if (lb <= 0) return;
+      r.t(name, show(lb, "mass"));
+      if (p && pkgLb(p) > 0) {
+        var n = Math.ceil(lb / pkgLb(p) - 1e-9), pk = n.toLocaleString("en-US") + " x " + pkgText(p);
+        if (+p.price > 0) { var c = n * p.price; cost += c; pk += ", cost " + c.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        r.t("   packages", pk);
+      }
+    }
+    if (salt) line("Salt " + salt.name + " (as received)", saltLb, saltProduct(salt.name));
+    lines.forEach(function (l) { if (l.conc > 0) line(l.p.name, l.conc * V, l.p); });
+    line("Weight material", vWM * 42 * rWM, weightMaterial());
+    if (vWM > 0) r.n("   weight material in tonnes", vWM * 42 * rWM / 2204.62, "MT");
+    r.blank(); r.title("Check");
+    r.t("Products + weight material volume", fmt(100 * (sumV + vWM) / V) + " % of mud");
+    if (fo > 0) r.t("Oil % / brine % of mud", fmt(100 * vOil / V) + " % / " + fmt(100 * vBrine / V) + " %");
+    if (cost > 0) { r.t("Total product cost", cost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })); r.t("Cost per unit volume", (cost / fromInt("volume", V)).toFixed(2) + " per " + uname("volume")); }
+    r.blank(); r.line("All amounts are approximate.");
+    return r.text();
+  }
+
+  function run(calc, inputs) {
+    var r = new Res(); r.title("Results");
+    try { calc.fn(inputs, r); }
+    catch (e) { if (e instanceof CalcError) r.warn(e.message); else r.warn("Calculation error: " + e.message); }
+    return r.text();
+  }
+
+  return {
+    WD: WD, LBSG: LBSG, UNITS: UNITS, sel: sel, uname: uname, toInt: toInt, fromInt: fromInt, fmt: fmt, fmtIn: fmtIn, show: show, parseNum: parseNum, preset: preset,
+    SALTS: SALTS, getSalt: getSalt, BRINES: BRINES, PRODUCT_COLS: PRODUCT_COLS, DEFAULT_PRODUCTS: DEFAULT_PRODUCTS,
+    get products() { return products; }, set products(p) { products = p; }, pkgLb: pkgLb, pkgText: pkgText, weightMaterial: weightMaterial,
+    CALCS: CALCS, GROUPS: [G1, G2, G3, G4, G5, G6, G7], run: run, formulate: formulate, CalcError: CalcError, Res: Res, pad: pad,
+    EQ_FORMULATION: EQ_FORMULATION, EQ_SALT: EQ_SALT, EQ_COMMON: EQ_COMMON
+  };
+})();
+if (typeof module !== "undefined") module.exports = MC;
+
+</script>
+<script>
+"use strict";
+(function () {
+  var nav = document.getElementById("nav"), main = document.getElementById("main"), presetSel = document.getElementById("preset");
+  var RELEASE_URL = "https://github.com/mohammedezzatamin-ctrl/MudCalcPro/releases/latest";
+  var REPO_URL = "https://github.com/mohammedezzatamin-ctrl/MudCalcPro";
+
+  // ---------- storage (per-browser, optional)
+  function load(key, def) { try { var s = localStorage.getItem("mcp." + key); return s ? JSON.parse(s) : def; } catch (e) { return def; } }
+  function save(key, val) { try { localStorage.setItem("mcp." + key, JSON.stringify(val)); return true; } catch (e) { return false; } }
+  var savedSel = load("units", null);
+  if (savedSel) Object.keys(savedSel).forEach(function (k) { if (MC.UNITS[k] && savedSel[k] < MC.UNITS[k].opts.length) MC.sel[k] = savedSel[k]; });
+  var savedProducts = load("products", null);
+  if (savedProducts && savedProducts.length) MC.products = savedProducts;
+  var memory = load("inputs", {});
+  var reports = load("reports", []);
+
+  function el(tag, attrs, html) { var e = document.createElement(tag); if (attrs) Object.keys(attrs).forEach(function (k) { if (k === "text") e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); }); if (html != null) e.innerHTML = html; return e; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function toast(msg) { var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("show"); }, 1800); }
+  function stamp(title) { var d = new Date(); return "Mud Calculator Pro (web)   " + d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) + " " + d.toTimeString().slice(0, 5) + "\n" + title + "\n\n"; }
+  function copyText(t) { if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { toast("Copied"); }, function () { toast("Copy failed"); }); }
+  function download(name, text, type) { var b = new Blob([text], { type: type || "text/plain" }), a = el("a", { href: URL.createObjectURL(b), download: name }); document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+  function printText(title, text) {
+    var w = window.open("", "_blank"); if (!w) { toast("Allow pop-ups to print"); return; }
+    w.document.write("<title>" + esc(title) + "</title><pre style='font:13px Consolas,monospace;white-space:pre-wrap'>" + esc(text) + "</pre>"); w.document.close(); w.focus(); w.print();
+  }
+  function resultButtons(box, getText, title) {
+    var b1 = el("button", { "class": "sec", text: "Copy" }), b2 = el("button", { "class": "sec", text: "Print" }), b3 = el("button", { "class": "sec", text: "Download .txt" });
+    b1.onclick = function () { if (getText()) copyText(getText()); };
+    b2.onclick = function () { if (getText()) printText(title, getText()); };
+    b3.onclick = function () { if (getText()) download(title.replace(/[^\w\- ]+/g, "") + ".txt", getText()); };
+    box.appendChild(b1); box.appendChild(b2); box.appendChild(b3);
+  }
+  function eqBlock(text) { var d = el("div", { "class": "eq card" }); d.appendChild(el("h3", { text: "Equations used" })); d.appendChild(el("pre", { text: text })); return d; }
+
+  // ---------- navigation
+  var PAGES = [
+    { group: "Mud formulation", items: [["Water-based mud from scratch", "page=wbm"], ["Oil-based mud from scratch", "page=obm"]] },
+    { group: "Data & records", items: [["Daily mud reports", "page=reports"], ["Products & prices", "page=products"]] },
+    { group: "Tools", items: [["Unit converter", "page=convert"], ["Unit settings", "page=units"], ["Windows version (download)", "page=download"]] }
+  ];
+  function buildNav() {
+    nav.innerHTML = "";
+    var a0 = el("a", { href: "#" , text: "Home" }); nav.appendChild(a0);
+    function grp(name) { nav.appendChild(el("div", { "class": "g", text: name })); }
+    MC.GROUPS.forEach(function (g, gi) {
+      grp(g);
+      MC.CALCS.forEach(function (c, i) { if (c.group === g) nav.appendChild(el("a", { href: "#calc=" + i, text: c.name })); });
+      if (g === "Brines & salt") nav.appendChild(el("a", { href: "#page=salt", text: "Salt & brine tables" }));
+      if (gi === 2) { grp(PAGES[0].group); PAGES[0].items.forEach(function (it) { nav.appendChild(el("a", { href: "#" + it[1], text: it[0] })); }); }
+    });
+    PAGES.slice(1).forEach(function (p) { grp(p.group); p.items.forEach(function (it) { nav.appendChild(el("a", { href: "#" + it[1], text: it[0] })); }); });
+  }
+  function markNav() {
+    var h = location.hash || "#";
+    Array.prototype.forEach.call(nav.querySelectorAll("a"), function (a) { a.classList.toggle("on", a.getAttribute("href") === h); });
+  }
+  function syncPreset() {
+    var allOil = true, allMet = true;
+    Object.keys(MC.UNITS).forEach(function (k) { if (MC.sel[k] !== 0) allOil = false; if (MC.sel[k] !== MC.UNITS[k].metric) allMet = false; });
+    presetSel.value = allOil ? "0" : (allMet ? "1" : "c");
+  }
+  presetSel.onchange = function () { if (presetSel.value === "c") return; MC.preset(presetSel.value === "1"); save("units", MC.sel); route(); toast("Units changed"); };
+  document.getElementById("menuBtn").onclick = function () { nav.classList.toggle("open"); };
+
+  // ---------- generic calculator page
+  function showCalc(i) {
+    var c = MC.CALCS[i]; if (!c) return home();
+    var mem = memory[c.name] || {};
+    main.appendChild(el("h2", { text: c.name }));
+    main.appendChild(el("p", { "class": "help", text: c.help }));
+    var grid = el("div", { "class": "grid" }), left = el("div"), card = el("div", { "class": "card" }), form = el("form", { "class": "form" });
+    var inputs = {};
+    c.fields.forEach(function (f) {
+      var id = "f_" + f.key, v = mem[f.key] != null ? mem[f.key] : f.def;
+      form.appendChild(el("label", { "for": id, text: f.label }));
+      if (f.choices) {
+        var s = el("select", { id: id, "class": "wide" });
+        f.choices.forEach(function (ch, j) { var o = el("option", { value: j, text: ch }); s.appendChild(o); });
+        s.value = String(v); form.appendChild(s); inputs[f.key] = s;
+      } else {
+        var inp = el("input", { id: id, inputmode: "decimal", autocomplete: "off", value: MC.fmtIn(MC.fromInt(f.kind, v)) });
+        form.appendChild(inp); form.appendChild(el("span", { "class": "u", text: MC.uname(f.kind) })); inputs[f.key] = inp;
+      }
+    });
+    var btn = el("button", { "class": "primary", type: "submit", text: "Calculate" });
+    form.appendChild(el("span")); form.appendChild(btn);
+    card.appendChild(form);
+    card.appendChild(el("div", { "class": "hint", text: "Units are set from the selector at the top. Press Enter to calculate." }));
+    left.appendChild(card);
+    left.appendChild(eqBlock(c.eq + "\n\n" + MC.EQ_COMMON));
+    var right = el("div", { "class": "res card" }); right.appendChild(el("h3", { text: "Results" }));
+    var pre = el("pre", { text: "Enter the inputs and press Calculate." }); right.appendChild(pre);
+    var out = "";
+    resultButtons(right, function () { return out; }, c.name);
+    grid.appendChild(left); grid.appendChild(right); main.appendChild(grid);
+    form.onsubmit = function (e) {
+      e.preventDefault();
+      var v = {}, echo = new MC.Res(); echo.title("Inputs");
+      for (var j = 0; j < c.fields.length; j++) {
+        var f = c.fields[j], x = inputs[f.key];
+        if (f.choices) { v[f.key] = +x.value; echo.t(f.label, f.choices[+x.value]); continue; }
+        var d = MC.parseNum(x.value);
+        if (!isFinite(d)) { x.focus(); x.select(); pre.textContent = "!! '" + x.value + "' is not a valid number for \"" + f.label + "\"."; return; }
+        v[f.key] = MC.toInt(f.kind, d); echo.t(f.label, MC.fmtIn(d) + (MC.uname(f.kind) ? " " + MC.uname(f.kind) : ""));
+      }
+      memory[c.name] = v; save("inputs", memory);
+      out = stamp(c.name) + echo.text() + "\n\n" + MC.run(c, v) + "\n\nEQUATIONS\n---------\n" + c.eq;
+      pre.textContent = out;
+      if (window.innerWidth < 900) right.scrollIntoView({ behavior: "smooth" });
+    };
+  }
+
+  // ---------- formulation
+  function showFormulation(obm) {
+    var key = obm ? "form_obm" : "form_wbm", mem = memory[key] || {};
+    main.appendChild(el("h2", { text: obm ? "Oil-based mud from scratch" : "Water-based mud from scratch" }));
+    main.appendChild(el("p", { "class": "help", text: "Builds a full mixing sheet: base fluids, salt, every product, weight material, packages and cost. Products, package sizes and prices come from Products & prices." }));
+    var grid = el("div", { "class": "grid" }), left = el("div"), card = el("div", { "class": "card" }), form = el("form", { "class": "form" });
+    var wm = MC.weightMaterial(), fields = [
+      ["v", "Volume to mix", "volume", 500], ["w", "Mud weight", "density", obm ? 12 : 10], ["oil", obm ? "OWR (oil %)" : "Oil in liquid phase", "percent", obm ? 80 : 0],
+      ["salt", "Salt / base water", null, 0], ["sal", obm ? "Water phase salinity" : "Chlorides (salt brine)", obm ? "ppm" : "cl", obm ? 250000 : 0],
+      ["pur", "Salt purity", "percent", obm ? 95 : 99], ["sgw", "SG of weight material", "sg", wm ? +wm.sg : 4.2], ["sgo", "SG of base oil", "sg", 0.8]];
+    var saltOpts = obm ? ["CaCl2", "NaCl", "KCl", "None (fresh water)"] : ["Fresh water", "Seawater", "NaCl", "KCl", "CaCl2"], ins = {};
+    fields.forEach(function (f) {
+      form.appendChild(el("label", { text: f[1] }));
+      if (f[0] === "salt") { var s = el("select", { "class": "wide" }); saltOpts.forEach(function (o, j) { s.appendChild(el("option", { value: j, text: o })); }); s.value = String(mem.salt || 0); form.appendChild(s); ins.salt = s; return; }
+      var val = mem[f[0]] != null ? mem[f[0]] : f[3];
+      var inp = el("input", { inputmode: "decimal", value: MC.fmtIn(MC.fromInt(f[2], val)) }); inp.dataset.kind = f[2];
+      form.appendChild(inp); form.appendChild(el("span", { "class": "u", text: MC.uname(f[2]) })); ins[f[0]] = inp;
+    });
+    card.appendChild(form);
+    var prods = MC.products.filter(function (p) { var c = String(p.category).toLowerCase(), s = String(p.system).toUpperCase(); return c !== "weighting" && c !== "salt" && (s === "BOTH" || s === (obm ? "OBM" : "WBM")); });
+    var tbl = el("table", { "class": "t" }); tbl.innerHTML = "<tr><th>Product</th><th>Conc. (" + esc(MC.uname("conc")) + ")</th><th>Package</th><th>SG</th></tr>";
+    var concIn = [];
+    prods.forEach(function (p, j) {
+      var tr = el("tr"), def = (mem.conc && mem.conc[p.name] != null) ? mem.conc[p.name] : (obm ? p.concOBM : p.concWBM);
+      tr.appendChild(el("td", { text: p.name }));
+      var td = el("td"), inp = el("input", { inputmode: "decimal", value: MC.fmtIn(MC.fromInt("conc", +def || 0)) }); td.appendChild(inp); tr.appendChild(td); concIn.push(inp);
+      tr.appendChild(el("td", { text: MC.pkgText(p) })); tr.appendChild(el("td", { text: MC.fmtIn(+p.sg) })); tbl.appendChild(tr);
+    });
+    var wrapT = el("div", { "class": "scroll" }); wrapT.style.marginTop = "14px"; wrapT.appendChild(tbl); card.appendChild(wrapT);
+    card.appendChild(el("div", { "class": "hint", text: "Edit the concentrations (0 = not used). Add products under Products & prices." }));
+    var btn = el("button", { "class": "primary", text: "Calculate" }); card.appendChild(btn);
+    left.appendChild(card); left.appendChild(eqBlock(MC.EQ_FORMULATION));
+    var right = el("div", { "class": "res card" }); right.appendChild(el("h3", { text: "Mixing sheet" }));
+    var pre = el("pre", { text: "Enter the mud details and press Calculate." }); right.appendChild(pre);
+    var out = ""; resultButtons(right, function () { return out; }, obm ? "OBM formulation" : "WBM formulation");
+    grid.appendChild(left); grid.appendChild(right); main.appendChild(grid);
+    function calc(e) {
+      if (e) e.preventDefault();
+      try {
+        var g = function (k) { var d = MC.parseNum(ins[k].value); if (!isFinite(d)) throw new MC.CalcError("'" + ins[k].value + "' is not a valid number."); return MC.toInt(ins[k].dataset.kind, d); };
+        var lines = [], cm = {};
+        prods.forEach(function (p, j) { var d = MC.parseNum(concIn[j].value); if (!isFinite(d)) throw new MC.CalcError("Concentration for " + p.name + " is not a number."); var c = MC.toInt("conc", d); lines.push({ p: p, conc: c }); cm[p.name] = c; });
+        var salt = saltOpts[+ins.salt.value]; if (/^None|^Fresh/.test(salt)) salt = "";
+        var vals = { v: g("v"), w: g("w"), oil: g("oil"), sal: g("sal"), pur: g("pur"), sgw: g("sgw"), sgo: g("sgo"), salt: +ins.salt.value, conc: cm };
+        memory[key] = vals; save("inputs", memory);
+        out = stamp(obm ? "Oil-based mud formulation" : "Water-based mud formulation") + MC.formulate(obm, vals.v, vals.w, vals.oil, salt, vals.sal, vals.pur, vals.sgw, vals.sgo, lines) + "\n\nEQUATIONS\n---------\n" + MC.EQ_FORMULATION;
+      } catch (ex) { out = "!! " + (ex.message || ex); }
+      pre.textContent = out;
+      if (window.innerWidth < 900) right.scrollIntoView({ behavior: "smooth" });
+    }
+    btn.onclick = calc; form.onsubmit = calc;
+  }
+
+  // ---------- salt tables
+  function showSalt() {
+    main.appendChild(el("h2", { text: "Salt & brine tables" }));
+    main.appendChild(el("p", { "class": "help", text: "Brine properties at about 68°F from the density correlation and crystallization curve. Crystallization points are approximate - confirm with the supplier's data sheet." }));
+    var s = el("select"); s.style.cssText = "font:inherit;padding:6px;border-radius:6px;margin-bottom:10px";
+    MC.SALTS.forEach(function (x, j) { s.appendChild(el("option", { value: j, text: x.name })); }); main.appendChild(s);
+    var box = el("div", { "class": "scroll" }); main.appendChild(box);
+    function draw() {
+      var x = MC.SALTS[+s.value], wts = [];
+      for (var w = 1; w < x.max; w++) wts.push(w); wts.push(x.max);
+      var h = "<table class='t'><tr><th>Wt % salt</th><th>SG</th><th>Density (" + esc(MC.uname("density")) + ")</th><th>Salt (" + esc(MC.uname("conc")) + " brine)</th><th>Water (bbl/bbl brine)</th><th>Salt (mg/L)</th><th>Chlorides (mg/L)</th><th>Brine vol / water vol</th><th>Cryst. point (" + esc(MC.uname("temp")) + ")</th><th>WPS (ppm)</th></tr>";
+      wts.forEach(function (w) {
+        var sg = x.SG(w), t = x.TCT(w);
+        h += "<tr><td>" + MC.fmt(w) + "</td><td>" + sg.toFixed(4) + "</td><td>" + MC.fmt(MC.fromInt("density", MC.WD * sg)) + "</td><td>" + MC.fmt(MC.fromInt("conc", MC.LBSG * sg * w / 100)) + "</td><td>" + (sg * (1 - w / 100)).toFixed(4) +
+          "</td><td>" + Math.round(w / 100 * sg * 1e6).toLocaleString("en-US") + "</td><td>" + Math.round(x.clFromWt(w)).toLocaleString("en-US") + "</td><td>" + (1 / (sg * (1 - w / 100))).toFixed(4) +
+          "</td><td>" + (isFinite(t) ? Math.round(MC.fromInt("temp", t)) : "-") + "</td><td>" + Math.round(w * 1e4).toLocaleString("en-US") + "</td></tr>";
+      });
+      box.innerHTML = h + "</table>";
+    }
+    s.onchange = draw; draw();
+    var g = el("div", { "class": "grid" }); g.style.marginTop = "22px";
+    var c1 = el("div", { "class": "card" }); c1.appendChild(el("h3", { text: "Clear brines - typical maximum density" })).style.cssText = "margin:0 0 8px;font-size:15px;color:var(--accent)";
+    var h2 = "<table class='t'><tr><th>Brine</th><th>Max density (" + esc(MC.uname("density")) + ")</th><th>Max SG</th></tr>";
+    MC.BRINES.forEach(function (b) { h2 += "<tr><td>" + esc(b[0]) + "</td><td>" + MC.fmt(MC.fromInt("density", b[1])) + "</td><td>" + (b[1] / MC.WD).toFixed(3) + "</td></tr>"; });
+    c1.insertAdjacentHTML("beforeend", h2 + "</table>");
+    g.appendChild(c1); g.appendChild(eqBlock(MC.EQ_SALT)); main.appendChild(g);
+  }
+
+  // ---------- products
+  function showProducts() {
+    main.appendChild(el("h2", { text: "Products & prices" }));
+    main.appendChild(el("p", { "class": "help", text: "Generic product list used by the formulation pages. Category 'Weighting' = weight material; 'Salt' = salts (name must contain CaCl2, NaCl or KCl). System = WBM, OBM or Both. Package unit: kg, lb, MT, gal, L or bbl. Changes are saved in this browser only." }));
+    var cols = MC.PRODUCT_COLS, keys = ["name", "category", "system", "sg", "pkgSize", "pkgUnit", "price", "concWBM", "concOBM"];
+    var rows = MC.products.map(function (p) { return keys.map(function (k) { return p[k]; }); });
+    var box = el("div", { "class": "scroll" }); main.appendChild(box);
+    function draw() {
+      var t = el("table", { "class": "t" }), hr = el("tr");
+      cols.forEach(function (c) { hr.appendChild(el("th", { text: c })); }); hr.appendChild(el("th", { text: "" })); t.appendChild(hr);
+      rows.forEach(function (r, i) {
+        var tr = el("tr");
+        r.forEach(function (v, j) { var td = el("td"), inp = el("input", { value: v == null ? "" : v }); inp.oninput = function () { rows[i][j] = inp.value; }; td.appendChild(inp); tr.appendChild(td); });
+        var del = el("button", { "class": "sec", text: "✕", title: "Remove row" }); del.style.margin = "0"; del.onclick = function () { rows.splice(i, 1); draw(); };
+        var td2 = el("td"); td2.appendChild(del); tr.appendChild(td2); t.appendChild(tr);
+      });
+      box.innerHTML = ""; box.appendChild(t);
+    }
+    draw();
+    var bar = el("div");
+    function btn(text, fn) { var b = el("button", { "class": "sec", text: text }); b.onclick = fn; bar.appendChild(b); }
+    function toProducts() { return rows.filter(function (r) { return String(r[0]).trim(); }).map(function (r) { var p = {}; keys.forEach(function (k, j) { p[k] = j >= 3 && j !== 5 ? (+MC.parseNum(r[j]) || 0) : String(r[j] == null ? "" : r[j]).trim(); }); if (!(p.sg > 0)) p.sg = 1; if (!p.system) p.system = "Both"; if (!p.pkgUnit) p.pkgUnit = "kg"; return p; }); }
+    btn("Add row", function () { rows.push(["", "", "Both", 1, 25, "kg", 0, 0, 0]); draw(); });
+    btn("Save", function () { MC.products = toProducts(); toast(save("products", MC.products) ? "Products saved in this browser" : "Saved for this visit only"); });
+    btn("Reset to generic list", function () { rows = MC.DEFAULT_PRODUCTS.map(function (p) { return keys.map(function (k) { return p[k]; }); }); MC.products = toProducts(); save("products", MC.products); draw(); toast("Generic list restored"); });
+    btn("Export CSV", function () { download("products.csv", [cols].concat(toProducts().map(function (p) { return keys.map(function (k) { return p[k]; }); })).map(csvRow).join("\r\n"), "text/csv"); });
+    var file = el("input", { type: "file", accept: ".csv" }); file.style.display = "none";
+    file.onchange = function () { var f = file.files[0]; if (!f) return; var rd = new FileReader(); rd.onload = function () { var data = parseCsv(rd.result); data.shift(); rows = data.filter(function (r) { return r[0]; }).map(function (r) { return keys.map(function (k, j) { return r[j] == null ? "" : r[j]; }); }); draw(); toast("Imported - press Save to keep"); }; rd.readAsText(f); };
+    btn("Import CSV", function () { file.click(); }); bar.appendChild(file);
+    main.appendChild(bar);
+  }
+  function csvCell(s) { s = s == null ? "" : String(s); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+  function csvRow(r) { return r.map(csvCell).join(","); }
+  function parseCsv(text) {
+    var rows = [], cur = [], sb = "", q = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { sb += '"'; i++; } else q = false; } else sb += c; }
+      else if (c === '"') q = true; else if (c === ",") { cur.push(sb); sb = ""; } else if (c === "\r") { } else if (c === "\n") { cur.push(sb); sb = ""; rows.push(cur); cur = []; } else sb += c;
+    }
+    cur.push(sb); if (cur.length > 1 || cur[0]) rows.push(cur); return rows;
+  }
+
+  // ---------- reports
+  var RF = ["Date", "Rig", "Well", "Operator", "Mud engineer", "Mud system", "Depth MD", "Depth TVD", "Hole size", "Casing shoe", "Activity",
+    "Mud weight", "Funnel visc (s/qt)", "PV (cP)", "YP", "Gels 10s/10m/30m", "600/300", "6/3", "API fluid loss (ml)", "HTHP fluid loss (ml)", "HTHP temp",
+    "Cake (1/32 in)", "pH", "Pm", "Pf/Mf", "Chlorides (mg/L)", "Hardness Ca (mg/L)", "MBT (ppb)", "Solids %", "Oil %", "Water %", "Sand %",
+    "OWR", "ES (V)", "WPS (ppm)", "Excess lime (ppb)", "LGS %", "HGS %", "Active volume", "Reserve volume", "Surface losses", "Downhole losses",
+    "Volume built", "Products used", "Remarks"];
+  function showReports() {
+    main.appendChild(el("h2", { text: "Daily mud reports" }));
+    main.appendChild(el("p", { "class": "help", text: "Record daily mud properties, volumes and products. Reports are kept in this browser; use Export CSV to save them to a file or open them in Excel." }));
+    var list = el("div", { "class": "replist" }), card = el("div", { "class": "card" }), form = el("div", { "class": "rep" }), boxes = {}, selIdx = -1;
+    RF.forEach(function (f) {
+      var multi = f === "Products used" || f === "Remarks", d = el("div", multi ? { "class": "full" } : null);
+      d.appendChild(el("label", { text: f })); var inp = el(multi ? "textarea" : "input", multi ? { rows: 3 } : null); d.appendChild(inp); form.appendChild(d); boxes[f] = inp;
+    });
+    function fill(r) { RF.forEach(function (f) { boxes[f].value = r && r[f] != null ? r[f] : ""; }); }
+    function drawList() {
+      list.innerHTML = "";
+      if (!reports.length) list.appendChild(el("div", { text: "No reports yet - press New report." }));
+      reports.forEach(function (r, i) { var d = el("div", { text: (r.Date || "") + "   " + (r.Well || "") + "   " + (r["Depth MD"] || "") }); if (i === selIdx) d.className = "on"; d.onclick = function () { selIdx = i; fill(r); drawList(); }; list.appendChild(d); });
+    }
+    var bar = el("div");
+    function btn(t, fn) { var b = el("button", { "class": "sec", text: t }); b.onclick = fn; bar.appendChild(b); }
+    btn("New report", function () { var last = reports[reports.length - 1]; fill(null); if (last) ["Rig", "Well", "Operator", "Mud engineer", "Mud system", "Hole size", "Casing shoe"].forEach(function (k) { boxes[k].value = last[k] || ""; }); boxes.Date.value = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }); selIdx = -1; drawList(); });
+    btn("Save report", function () { var r = {}; RF.forEach(function (f) { r[f] = boxes[f].value; }); if (selIdx >= 0) reports[selIdx] = r; else { reports.push(r); selIdx = reports.length - 1; } toast(save("reports", reports) ? "Report saved in this browser" : "Saved for this visit only - export CSV to keep"); drawList(); });
+    btn("Delete", function () { if (selIdx < 0) return; reports.splice(selIdx, 1); selIdx = -1; save("reports", reports); fill(null); drawList(); toast("Report deleted"); });
+    btn("Print", function () { var t = RF.map(function (f) { return MC.pad(f) + boxes[f].value; }).join("\n"); printText("Daily Mud Report", "DAILY MUD REPORT\n\n" + t); });
+    btn("Export CSV", function () { download("reports.csv", [RF].concat(reports.map(function (r) { return RF.map(function (f) { return r[f] || ""; }); })).map(csvRow).join("\r\n"), "text/csv"); });
+    var file = el("input", { type: "file", accept: ".csv" }); file.style.display = "none";
+    file.onchange = function () { var f = file.files[0]; if (!f) return; var rd = new FileReader(); rd.onload = function () { var data = parseCsv(rd.result), head = data.shift() || []; data.forEach(function (row) { var r = {}; head.forEach(function (h, j) { r[h] = row[j] || ""; }); reports.push(r); }); save("reports", reports); drawList(); toast("Imported " + data.length + " reports"); }; rd.readAsText(f); };
+    btn("Import CSV", function () { file.click(); }); bar.appendChild(file);
+    main.appendChild(list); card.appendChild(form); card.appendChild(bar); main.appendChild(card); drawList();
+  }
+
+  // ---------- converter and unit settings
+  function showConvert() {
+    main.appendChild(el("h2", { text: "Unit converter" }));
+    main.appendChild(el("p", { "class": "help", text: "Type a value, choose its unit, and see it in every other unit of the same kind." }));
+    var kinds = Object.keys(MC.UNITS).filter(function (k) { return MC.UNITS[k].opts.length > 1; });
+    var card = el("div", { "class": "card" }); card.style.maxWidth = "620px";
+    var row = el("div"); row.style.cssText = "display:flex;gap:8px;flex-wrap:wrap";
+    var sk = el("select"), val = el("input", { value: "1", inputmode: "decimal" }), su = el("select"), pre = el("pre");
+    [sk, val, su].forEach(function (x) { x.style.cssText = "font:inherit;padding:6px 8px;border:1px solid #b9c3cf;border-radius:6px"; row.appendChild(x); });
+    kinds.forEach(function (k, j) { sk.appendChild(el("option", { value: j, text: MC.UNITS[k].kind })); });
+    pre.style.cssText = "margin-top:14px;background:var(--res);border:1px solid var(--line);border-radius:8px;padding:12px";
+    function fillUnits() { su.innerHTML = ""; MC.UNITS[kinds[+sk.value]].opts.forEach(function (o, j) { su.appendChild(el("option", { value: j, text: o.name })); }); }
+    function runC() {
+      var k = kinds[+sk.value], d = MC.parseNum(val.value); if (!isFinite(d)) { pre.textContent = "Not a number."; return; }
+      var from = MC.UNITS[k].opts[+su.value], inner = d * from.f + from.o;
+      pre.textContent = MC.UNITS[k].opts.map(function (u) { return MC.pad(u.name) + MC.fmt((inner - u.o) / u.f); }).join("\n");
+    }
+    sk.onchange = function () { fillUnits(); runC(); }; su.onchange = runC; val.oninput = runC;
+    fillUnits(); runC(); card.appendChild(row); card.appendChild(pre); main.appendChild(card);
+  }
+  function showUnits() {
+    main.appendChild(el("h2", { text: "Unit settings" }));
+    main.appendChild(el("p", { "class": "help", text: "Choose the unit used for each quantity on every page. Saved in this browser." }));
+    var card = el("div", { "class": "card" }); card.style.maxWidth = "560px";
+    var b1 = el("button", { "class": "sec", text: "All oilfield units" }), b2 = el("button", { "class": "sec", text: "All metric units" });
+    b1.onclick = function () { MC.preset(false); save("units", MC.sel); route(); }; b2.onclick = function () { MC.preset(true); save("units", MC.sel); route(); };
+    card.appendChild(b1); card.appendChild(b2);
+    var form = el("div", { "class": "form" }); form.style.cssText = "grid-template-columns:1fr 170px;margin-top:14px";
+    Object.keys(MC.UNITS).forEach(function (k) {
+      var U = MC.UNITS[k]; if (U.opts.length < 2) return;
+      form.appendChild(el("label", { text: U.kind }));
+      var s = el("select"); U.opts.forEach(function (o, j) { s.appendChild(el("option", { value: j, text: o.name })); }); s.value = String(MC.sel[k]);
+      s.onchange = function () { MC.sel[k] = +s.value; save("units", MC.sel); syncPreset(); toast("Units updated"); };
+      form.appendChild(s);
+    });
+    card.appendChild(form); main.appendChild(card);
+  }
+
+  // ---------- home & download
+  function home() {
+    main.appendChild(el("h2", { text: "Mud Calculator Pro" }));
+    main.insertAdjacentHTML("beforeend",
+      "<div class='card welcome' style='max-width:900px'><p>Drilling fluids engineering calculator. Pick a calculation from the menu" + (window.innerWidth < 900 ? " (☰ top left)" : " on the left") + ":</p><ul>" +
+      "<li>Weight up, cut weight, mix muds, add barite</li><li>Oil mud: OWR, WPS, water/oil additions, water contamination</li>" +
+      "<li>Basic mixes, slugs, full WBM/OBM formulation with packages and cost</li><li>Hole and well volumes, pump output, annular velocity, ECD, cuttings, tanks</li>" +
+      "<li>Hydrostatic, EMW / LOT / MAASP, kill sheet basics</li><li>Brines: dry-salt brines, blending, chlorides conversion, salt tables</li>" +
+      "<li>Mud testing: rheology, WBM solids analysis, OBM retort &amp; salinity</li><li>Daily mud reports, product list with prices, unit converter</li></ul>" +
+      "<p>Every calculation shows the <b>equations</b> it uses. Units: choose oilfield or metric at the top, or per quantity in Unit settings.</p>" +
+      "<p>Your inputs, products, reports and unit choices are kept in this browser only.</p>" +
+      "<p style='color:var(--muted)'>All results are engineering estimates. Check critical numbers before use.</p>" +
+      "<a class='dl' href='#page=download'>Get the Windows version</a> &nbsp; <a href='" + REPO_URL + "' target='_blank' rel='noopener'>Source code on GitHub</a></div>");
+  }
+  function showDownload() {
+    main.appendChild(el("h2", { text: "Windows version" }));
+    main.insertAdjacentHTML("beforeend",
+      "<div class='card' style='max-width:760px'><p>The same calculator as a Windows desktop program (MudCalcPro.exe). It needs no installation: download it, then double-click to run. It keeps its data (products, reports, settings) as CSV files in a <code>data</code> folder next to the program.</p>" +
+      "<a class='dl' href='" + RELEASE_URL + "' target='_blank' rel='noopener'>Download MudCalcPro.exe</a>" +
+      "<p class='hint'>Requires Windows with .NET Framework 4 (built into Windows 8, 10 and 11). If Windows SmartScreen warns about an unknown publisher, choose More info → Run anyway.</p>" +
+      "<p class='hint'>To build it yourself: download the source from <a href='" + REPO_URL + "' target='_blank' rel='noopener'>GitHub</a> and double-click <code>build.bat</code>.</p></div>");
+  }
+
+  // ---------- router
+  function route() {
+    main.innerHTML = ""; nav.classList.remove("open"); syncPreset();
+    var h = location.hash.replace(/^#/, ""), m;
+    if ((m = /^calc=(\d+)$/.exec(h))) showCalc(+m[1]);
+    else if (h === "page=wbm") showFormulation(false);
+    else if (h === "page=obm") showFormulation(true);
+    else if (h === "page=salt") showSalt();
+    else if (h === "page=products") showProducts();
+    else if (h === "page=reports") showReports();
+    else if (h === "page=convert") showConvert();
+    else if (h === "page=units") showUnits();
+    else if (h === "page=download") showDownload();
+    else home();
+    markNav(); main.scrollTop = 0;
+  }
+  window.addEventListener("hashchange", route);
+  buildNav(); route();
+})();
+</script>
+</body>
+</html>
